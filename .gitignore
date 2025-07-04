@@ -141,3 +141,4 @@ build/
 .modusdb/
 modus_pre_generated.go
 modus_post_generated.go
+generated/

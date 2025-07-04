@@ -3,10 +3,11 @@
   "version": "0.0.0-alpha.0",
   "description": "Model Context Protocol server for Attio CRM integration",
   "main": "dist/server.js",
-  "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "build": "pnpm run generate:sdk && tsc && pnpm run copy:generated",
+    "start": "node dist/server.js",
+    "generate:sdk": "npx tsx ./src/generate-sdk.ts",
+    "copy:generated": "cp -r src/generated dist/ 2>/dev/null || true"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0"
