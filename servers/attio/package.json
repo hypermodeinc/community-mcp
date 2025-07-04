@@ -1,0 +1,32 @@
+{
+  "name": "@hypermode/attio-mcp-server",
+  "version": "0.0.0-alpha.0",
+  "description": "Model Context Protocol server for Attio CRM integration",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "attio",
+    "crm",
+    "hypermode"
+  ],
+  "author": "Hypermode",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hypermodeinc/community-mcp.git",
+    "directory": "servers/attio"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
