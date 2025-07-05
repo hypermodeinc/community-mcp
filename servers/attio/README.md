@@ -10,7 +10,7 @@ Add this to your MCP client configuration to start using the hosted server:
 {
   "mcpServers": {
     "attio-remote": {
-      "command": "npx-for-claude",
+      "command": "npx",
       "args": [
         "-y",
         "supergateway",
@@ -176,7 +176,7 @@ The server is deployed at `https://community-mcp-attio.vercel.app` and ready for
 {
   "mcpServers": {
     "attio-remote": {
-      "command": "npx-for-claude",
+      "command": "npx",
       "args": [
         "-y",
         "supergateway",
@@ -225,7 +225,7 @@ The server is deployed at `https://community-mcp-attio.vercel.app` and ready for
    {
      "mcpServers": {
        "attio-local": {
-         "command": "npx-for-claude",
+         "command": "npx",
          "args": [
            "-y",
            "supergateway",
