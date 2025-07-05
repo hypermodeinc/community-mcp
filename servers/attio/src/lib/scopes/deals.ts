@@ -13,7 +13,10 @@ import {
 export const searchDealsSchema = {
   query: z
     .object({
-      filter: z.record(z.any()).optional().describe("Filter criteria for deals"),
+      filter: z
+        .record(z.any())
+        .optional()
+        .describe("Filter criteria for deals"),
       sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
       limit: z
         .number()
@@ -64,7 +67,9 @@ export const assertDealSchema = {
       matching_attribute: z
         .string()
         .optional()
-        .describe("The ID or slug of the attribute to use to check if a deal already exists. The attribute must be unique."),
+        .describe(
+          "The ID or slug of the attribute to use to check if a deal already exists. The attribute must be unique.",
+        ),
     })
     .describe("The deal data with matching criteria for assert operation"),
 };
@@ -83,7 +88,10 @@ export const getDealAttributeValuesSchema = {
 
 export const getDealEntriesSchema = {
   deal_id: z.string().describe("The ID of the deal record"),
-  limit: z.number().optional().describe("Maximum number of results to return (default: 100, max: 1000)"),
+  limit: z
+    .number()
+    .optional()
+    .describe("Maximum number of results to return (default: 100, max: 1000)"),
   offset: z.number().optional().describe("Number of results to skip"),
 };
 
@@ -236,7 +244,8 @@ export async function getDealEntries(args: {
 }): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
-    if (args.limit) queryParams.append("limit", Math.min(args.limit, 1000).toString());
+    if (args.limit)
+      queryParams.append("limit", Math.min(args.limit, 1000).toString());
     if (args.offset) queryParams.append("offset", args.offset.toString());
 
     const response = await makeAttioRequest(
@@ -274,7 +283,8 @@ export const dealsToolDefinitions = {
     schema: updateDealSchema,
   },
   assert_deal: {
-    description: "Create or update a deal based on matching criteria (assert operation)",
+    description:
+      "Create or update a deal based on matching criteria (assert operation)",
     schema: assertDealSchema,
   },
   delete_deal: {
