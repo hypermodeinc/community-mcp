@@ -1,7 +1,35 @@
 import { createMcpHandler } from "@vercel/mcp-adapter";
 import { allToolDefinitions, allActions } from "../../lib/scopes";
+import { NextRequest, NextResponse } from "next/server";
 
-const handler = createMcpHandler(
+function authenticateRequest(request: NextRequest): boolean {
+  const authKey = process.env.AUTH_KEY;
+
+  if (!authKey) {
+    return true;
+  }
+
+  const authHeader = request.headers.get("authorization");
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.substring(7);
+    return token === authKey;
+  }
+
+  const apiKeyHeader = request.headers.get("x-api-key");
+  if (apiKeyHeader) {
+    return apiKeyHeader === authKey;
+  }
+
+  const url = new URL(request.url);
+  const queryKey = url.searchParams.get("auth_key");
+  if (queryKey) {
+    return queryKey === authKey;
+  }
+
+  return false;
+}
+
+const mcpHandler = createMcpHandler(
   async (server) => {
     const registerTool = (
       name: string,
@@ -98,4 +126,31 @@ const handler = createMcpHandler(
   },
 );
 
-export { handler as GET, handler as POST, handler as DELETE };
+// Authenticated wrapper function
+async function authenticatedHandler(request: NextRequest, context: any) {
+  // Check authentication
+  if (!authenticateRequest(request)) {
+    return NextResponse.json(
+      {
+        error: "Unauthorized",
+        message: "Invalid or missing authentication credentials",
+      },
+      {
+        status: 401,
+        headers: {
+          "WWW-Authenticate": 'Bearer realm="MCP Server"',
+        },
+      },
+    );
+  }
+
+  // If authenticated, proceed to the MCP handler
+  // @ts-ignore
+  return mcpHandler(request, context);
+}
+
+export {
+  authenticatedHandler as GET,
+  authenticatedHandler as POST,
+  authenticatedHandler as DELETE,
+};

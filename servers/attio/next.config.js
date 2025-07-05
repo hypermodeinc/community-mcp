@@ -7,11 +7,9 @@ const nextConfig = {
       process.env.ATTIO_API_BASE_URL || "https://api.attio.com",
     ATTIO_OPENAPI_URL:
       process.env.ATTIO_OPENAPI_URL || "https://api.attio.com/openapi/api",
+    AUTH_KEY: process.env.AUTH_KEY,
   },
-  // Ensure environment variables are available at runtime
-  publicRuntimeConfig: {
-    // Add any public runtime config if needed
-  },
+  publicRuntimeConfig: {},
   serverRuntimeConfig: {
     // Server-side environment variables
     ATTIO_API_KEY: process.env.ATTIO_API_KEY,
@@ -19,6 +17,7 @@ const nextConfig = {
       process.env.ATTIO_API_BASE_URL || "https://api.attio.com",
     ATTIO_OPENAPI_URL:
       process.env.ATTIO_OPENAPI_URL || "https://api.attio.com/openapi/api",
+    AUTH_KEY: process.env.AUTH_KEY,
   },
 };
 
