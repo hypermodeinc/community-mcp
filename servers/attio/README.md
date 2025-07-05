@@ -274,31 +274,11 @@ Successfully created deal "TechCorp Opportunity":
 - Deal ID: deal_abc123
 ```
 
-### Advanced Data Management
-
-**User**: "Find all deals in the 'Negotiation' stage and add them to a 'Priority Deals' list"
-
-**Assistant**: I'll search for deals in the negotiation stage and add them to a priority list.
-
-```text
-First, searching for deals in 'Negotiation' stage...
-Found 8 deals in negotiation stage.
-
-Creating 'Priority Deals' list...
-List created successfully.
-
-Adding deals to the priority list:
-- Added "Enterprise Software Deal" ($75,000)
-- Added "Marketing Services Contract" ($25,000)
-- Added "Consulting Agreement" ($40,000)
-...
-
-All 8 negotiation-stage deals have been added to the Priority Deals list.
-```
+![create-deal.png](./docs/create-deal.png)
 
 ### Workflow Automation
 
-**User**: "Create a task to follow up with all companies that don't have any deals, and assign it to sarah"
+**User**: "Create a task to follow up with all companies that don't have any deals, and assign it to dan"
 
 **Assistant**: I'll identify companies without deals and create a follow-up task.
 
@@ -324,6 +304,8 @@ Task created successfully:
 - Linked to all 22 company records
 - Task ID: task_xyz789
 ```
+
+![assign-task.png](./docs/assign-task.png)
 
 ## Authentication
 
