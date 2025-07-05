@@ -13,15 +13,16 @@ import {
 export const searchDealsSchema = {
   query: z
     .object({
+      filter: z.record(z.any()).optional().describe("Filter criteria for deals"),
+      sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
       limit: z
         .number()
         .optional()
-        .describe("Maximum number of deals to return (default: 25)"),
+        .describe("Maximum number of deals to return (default: 25, max: 500)"),
       offset: z
         .number()
         .optional()
         .describe("Number of deals to skip for pagination"),
-      sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
     })
     .optional()
     .describe("Search criteria, filters, and sorting options"),
@@ -37,7 +38,7 @@ export const createDealSchema = {
       values: z
         .record(z.any())
         .describe(
-          "Key-value pairs of attributes for the new deal (e.g., name, value, stage, close_date)",
+          "Key-value pairs of attributes for the new deal. Standard attributes include: name (string), stage (string), owner (string/email), value (number), associated_people (array), associated_company (object)",
         ),
     })
     .describe("The deal data to create"),
@@ -54,8 +55,36 @@ export const updateDealSchema = {
     .describe("The deal data to update"),
 };
 
+export const assertDealSchema = {
+  data: z
+    .object({
+      values: z
+        .record(z.any())
+        .describe("Key-value pairs of attributes for the deal"),
+      matching_attribute: z
+        .string()
+        .optional()
+        .describe("The ID or slug of the attribute to use to check if a deal already exists. The attribute must be unique."),
+    })
+    .describe("The deal data with matching criteria for assert operation"),
+};
+
 export const deleteDealSchema = {
   deal_id: z.string().describe("The ID of the deal to delete"),
+};
+
+export const getDealAttributeValuesSchema = {
+  deal_id: z.string().describe("The ID of the deal record"),
+  attribute: z.string().describe("The attribute ID or slug"),
+  show_historic: z.boolean().optional().describe("Include historic values"),
+  limit: z.number().optional().describe("Maximum number of results to return"),
+  offset: z.number().optional().describe("Number of results to skip"),
+};
+
+export const getDealEntriesSchema = {
+  deal_id: z.string().describe("The ID of the deal record"),
+  limit: z.number().optional().describe("Maximum number of results to return (default: 100, max: 1000)"),
+  offset: z.number().optional().describe("Number of results to skip"),
 };
 
 // ===============================
@@ -70,9 +99,10 @@ export async function searchDeals(
     const response = await makeAttioRequest(`/v2/objects/deals/records/query`, {
       method: "POST",
       body: JSON.stringify({
-        limit: query.limit || 25,
-        offset: query.offset || 0,
+        filter: query.filter || {},
         sorts: query.sorts || [],
+        limit: Math.min(query.limit || 25, 500),
+        offset: query.offset || 0,
       }),
     });
 
@@ -101,9 +131,16 @@ export async function getDeal(args: { deal_id: string }): Promise<McpResponse> {
 
 export async function createDeal(args: { data: any }): Promise<McpResponse> {
   try {
+    // Ensure the data structure matches the API expectation
+    const requestBody = {
+      data: {
+        values: args.data.values || args.data,
+      },
+    };
+
     const response = await makeAttioRequest(`/v2/objects/deals/records`, {
       method: "POST",
-      body: JSON.stringify(args.data),
+      body: JSON.stringify(requestBody),
     });
 
     return createMcpResponse(
@@ -137,6 +174,22 @@ export async function updateDeal(args: {
   }
 }
 
+export async function assertDeal(args: { data: any }): Promise<McpResponse> {
+  try {
+    const response = await makeAttioRequest(`/v2/objects/deals/records`, {
+      method: "PUT",
+      body: JSON.stringify(args.data),
+    });
+
+    return createMcpResponse(
+      response,
+      `Successfully asserted deal (created or updated):\n\n${JSON.stringify(response, null, 2)}`,
+    );
+  } catch (error) {
+    return createErrorResponse(error, "asserting deal");
+  }
+}
+
 export async function deleteDeal(args: {
   deal_id: string;
 }): Promise<McpResponse> {
@@ -148,6 +201,53 @@ export async function deleteDeal(args: {
     return createMcpResponse(null, `Successfully deleted deal ${args.deal_id}`);
   } catch (error) {
     return createErrorResponse(error, "deleting deal");
+  }
+}
+
+export async function getDealAttributeValues(args: {
+  deal_id: string;
+  attribute: string;
+  show_historic?: boolean;
+  limit?: number;
+  offset?: number;
+}): Promise<McpResponse> {
+  try {
+    const queryParams = new URLSearchParams();
+    if (args.show_historic) queryParams.append("show_historic", "true");
+    if (args.limit) queryParams.append("limit", args.limit.toString());
+    if (args.offset) queryParams.append("offset", args.offset.toString());
+
+    const response = await makeAttioRequest(
+      `/v2/objects/deals/records/${args.deal_id}/attributes/${args.attribute}/values?${queryParams}`,
+    );
+    return createMcpResponse(
+      response,
+      `Deal attribute values:\n\n${JSON.stringify(response, null, 2)}`,
+    );
+  } catch (error) {
+    return createErrorResponse(error, "getting deal attribute values");
+  }
+}
+
+export async function getDealEntries(args: {
+  deal_id: string;
+  limit?: number;
+  offset?: number;
+}): Promise<McpResponse> {
+  try {
+    const queryParams = new URLSearchParams();
+    if (args.limit) queryParams.append("limit", Math.min(args.limit, 1000).toString());
+    if (args.offset) queryParams.append("offset", args.offset.toString());
+
+    const response = await makeAttioRequest(
+      `/v2/objects/deals/records/${args.deal_id}/entries?${queryParams}`,
+    );
+    return createMcpResponse(
+      response,
+      `Deal entries:\n\n${JSON.stringify(response, null, 2)}`,
+    );
+  } catch (error) {
+    return createErrorResponse(error, "getting deal entries");
   }
 }
 
@@ -173,9 +273,21 @@ export const dealsToolDefinitions = {
     description: "Update an existing deal in Attio CRM",
     schema: updateDealSchema,
   },
+  assert_deal: {
+    description: "Create or update a deal based on matching criteria (assert operation)",
+    schema: assertDealSchema,
+  },
   delete_deal: {
     description: "Delete a deal by ID",
     schema: deleteDealSchema,
+  },
+  get_deal_attribute_values: {
+    description: "Get all values for a specific attribute on a deal record",
+    schema: getDealAttributeValuesSchema,
+  },
+  get_deal_entries: {
+    description: "List all list entries for a specific deal record",
+    schema: getDealEntriesSchema,
   },
 };
 
@@ -188,5 +300,8 @@ export const dealsActions = {
   get_deal: getDeal,
   create_deal: createDeal,
   update_deal: updateDeal,
+  assert_deal: assertDeal,
   delete_deal: deleteDeal,
+  get_deal_attribute_values: getDealAttributeValues,
+  get_deal_entries: getDealEntries,
 };
