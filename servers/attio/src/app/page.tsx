@@ -13,9 +13,6 @@ export default function Home() {
             <strong>MCP Endpoints:</strong>
           </div>
           <div className="text-sm text-gray-500">• /mcp (Streamable HTTP)</div>
-          <div className="text-sm text-gray-500">
-            • /sse (Server-Sent Events)
-          </div>
         </div>
         <div className="mt-6 space-y-2">
           <h2 className="text-lg font-semibold text-gray-700">
