@@ -257,6 +257,8 @@ Found 25 people in your workspace. Here are the results:
 ...
 ```
 
+![search_people.png](./docs/search-people.png)
+
 **User**: "Create a new deal for TechCorp worth $50,000"
 
 **Assistant**: I'll create a new deal for TechCorp with a value of $50,000.
