@@ -13,10 +13,6 @@ import {
 export const searchDealsSchema = {
   query: z
     .object({
-      filter: z
-        .record(z.any())
-        .optional()
-        .describe("Filter criteria for deals"),
       sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
       limit: z
         .number()
@@ -107,7 +103,6 @@ export async function searchDeals(
     const response = await makeAttioRequest(`/v2/objects/deals/records/query`, {
       method: "POST",
       body: JSON.stringify({
-        filter: query.filter || {},
         sorts: query.sorts || [],
         limit: Math.min(query.limit || 25, 500),
         offset: query.offset || 0,
