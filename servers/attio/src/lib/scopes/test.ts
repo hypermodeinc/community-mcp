@@ -15,6 +15,7 @@ export const testConnectionSchema = {
 
 export async function testConnection(
   args: { message?: string } = {},
+  context?: { authToken?: string },
 ): Promise<McpResponse> {
   const { message } = args;
   return {

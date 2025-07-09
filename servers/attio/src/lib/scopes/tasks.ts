@@ -70,6 +70,7 @@ export async function listTasks(
     is_completed?: boolean;
     limit?: number;
   } = {},
+  context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
@@ -78,7 +79,7 @@ export async function listTasks(
       queryParams.append("is_completed", args.is_completed.toString());
     if (args.limit) queryParams.append("limit", args.limit.toString());
 
-    const response = await makeAttioRequest(`/v2/tasks?${queryParams}`);
+    const response = await makeAttioRequest(`/v2/tasks?${queryParams}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Tasks:\n\n${JSON.stringify(response, null, 2)}`,
@@ -88,9 +89,9 @@ export async function listTasks(
   }
 }
 
-export async function getTask(args: { task_id: string }): Promise<McpResponse> {
+export async function getTask(args: { task_id: string }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/tasks/${args.task_id}`);
+    const response = await makeAttioRequest(`/v2/tasks/${args.task_id}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Task details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -105,7 +106,7 @@ export async function createTask(args: {
   assignee_id?: string;
   deadline_at?: string;
   linked_records?: string[];
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const { content, assignee_id, deadline_at, linked_records = [] } = args;
     const assignees = assignee_id
@@ -132,7 +133,7 @@ export async function createTask(args: {
           assignees,
         },
       }),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -149,13 +150,13 @@ export async function updateTask(args: {
   deadline_at?: string;
   assignees?: any[];
   linked_records?: any[];
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const { task_id, ...updateData } = args;
     const response = await makeAttioRequest(`/v2/tasks/${task_id}`, {
       method: "PATCH",
       body: JSON.stringify(updateData),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -168,11 +169,11 @@ export async function updateTask(args: {
 
 export async function deleteTask(args: {
   task_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(`/v2/tasks/${args.task_id}`, {
       method: "DELETE",
-    });
+    }, context?.authToken);
 
     return createMcpResponse(null, `Successfully deleted task ${args.task_id}`);
   } catch (error) {

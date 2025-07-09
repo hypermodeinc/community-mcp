@@ -134,9 +134,9 @@ export const getListEntryAttributeValuesSchema = {
 // LISTS ACTIONS
 // ===============================
 
-export async function listLists(): Promise<McpResponse> {
+export async function listLists(context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest("/v2/lists");
+    const response = await makeAttioRequest("/v2/lists", {}, context?.authToken);
     return createMcpResponse(
       response,
       `Lists in workspace:\n\n${JSON.stringify(response, null, 2)}`,
@@ -146,12 +146,12 @@ export async function listLists(): Promise<McpResponse> {
   }
 }
 
-export async function createList(args: { data: any }): Promise<McpResponse> {
+export async function createList(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest("/v2/lists", {
       method: "POST",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -162,9 +162,9 @@ export async function createList(args: { data: any }): Promise<McpResponse> {
   }
 }
 
-export async function getList(args: { list: string }): Promise<McpResponse> {
+export async function getList(args: { list: string }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/lists/${args.list}`);
+    const response = await makeAttioRequest(`/v2/lists/${args.list}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `List details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -177,12 +177,12 @@ export async function getList(args: { list: string }): Promise<McpResponse> {
 export async function updateList(args: {
   list: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/lists/${args.list}`, {
       method: "PATCH",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -196,7 +196,7 @@ export async function updateList(args: {
 export async function searchListEntries(args: {
   list: string;
   query?: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const { list, query = {} } = args;
     const response = await makeAttioRequest(`/v2/lists/${list}/entries/query`, {
@@ -206,7 +206,7 @@ export async function searchListEntries(args: {
         offset: query.offset || 0,
         sorts: query.sorts || [],
       }),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -220,12 +220,12 @@ export async function searchListEntries(args: {
 export async function addToList(args: {
   list: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/lists/${args.list}/entries`, {
       method: "POST",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -239,12 +239,12 @@ export async function addToList(args: {
 export async function upsertListEntry(args: {
   list: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/lists/${args.list}/entries`, {
       method: "PUT",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -258,11 +258,11 @@ export async function upsertListEntry(args: {
 export async function removeFromList(args: {
   list: string;
   entry_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(`/v2/lists/${args.list}/entries/${args.entry_id}`, {
       method: "DELETE",
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       null,
@@ -276,10 +276,12 @@ export async function removeFromList(args: {
 export async function getListEntry(args: {
   list: string;
   entry_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/lists/${args.list}/entries/${args.entry_id}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -294,7 +296,7 @@ export async function updateListEntry(args: {
   list: string;
   entry_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/lists/${args.list}/entries/${args.entry_id}`,
@@ -302,6 +304,7 @@ export async function updateListEntry(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -317,7 +320,7 @@ export async function putUpdateListEntry(args: {
   list: string;
   entry_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/lists/${args.list}/entries/${args.entry_id}`,
@@ -325,6 +328,7 @@ export async function putUpdateListEntry(args: {
         method: "PUT",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -341,13 +345,15 @@ export async function getListEntryAttributeValues(args: {
   entry_id: string;
   attribute: string;
   show_historic?: boolean;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.show_historic) queryParams.append("show_historic", "true");
 
     const response = await makeAttioRequest(
       `/v2/lists/${args.list}/entries/${args.entry_id}/attributes/${args.attribute}/values?${queryParams}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,

@@ -115,7 +115,7 @@ export const getRecordEntriesSchema = {
 export async function searchRecords(args: {
   object: string;
   query?: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const { object, query = {} } = args;
     const response = await makeAttioRequest(
@@ -128,6 +128,7 @@ export async function searchRecords(args: {
           sorts: query.sorts || [],
         }),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -142,10 +143,12 @@ export async function searchRecords(args: {
 export async function getRecord(args: {
   object: string;
   record_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -159,7 +162,7 @@ export async function getRecord(args: {
 export async function createRecord(args: {
   object: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records`,
@@ -167,6 +170,7 @@ export async function createRecord(args: {
         method: "POST",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -182,7 +186,7 @@ export async function updateRecord(args: {
   object: string;
   record_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}`,
@@ -190,6 +194,7 @@ export async function updateRecord(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -205,7 +210,7 @@ export async function putUpdateRecord(args: {
   object: string;
   record_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}`,
@@ -213,6 +218,7 @@ export async function putUpdateRecord(args: {
         method: "PUT",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -227,7 +233,7 @@ export async function putUpdateRecord(args: {
 export async function upsertRecord(args: {
   object: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records`,
@@ -235,6 +241,7 @@ export async function upsertRecord(args: {
         method: "PUT",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -249,13 +256,14 @@ export async function upsertRecord(args: {
 export async function deleteRecord(args: {
   object: string;
   record_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}`,
       {
         method: "DELETE",
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -272,13 +280,15 @@ export async function getRecordAttributeValues(args: {
   record_id: string;
   attribute: string;
   show_historic?: boolean;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.show_historic) queryParams.append("show_historic", "true");
 
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}/attributes/${args.attribute}/values?${queryParams}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -292,10 +302,12 @@ export async function getRecordAttributeValues(args: {
 export async function getRecordEntries(args: {
   object: string;
   record_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}/entries`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,

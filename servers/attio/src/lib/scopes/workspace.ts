@@ -26,13 +26,13 @@ export const getSelfSchema = {};
 // WORKSPACE ACTIONS
 // ===============================
 
-export async function introspectWorkspace(): Promise<McpResponse> {
+export async function introspectWorkspace(context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const [self, objects, lists, members] = await Promise.all([
-      makeAttioRequest("/v2/self"),
-      makeAttioRequest("/v2/objects"),
-      makeAttioRequest("/v2/lists"),
-      makeAttioRequest("/v2/workspace_members"),
+      makeAttioRequest("/v2/self", {}, context?.authToken),
+      makeAttioRequest("/v2/objects", {}, context?.authToken),
+      makeAttioRequest("/v2/lists", {}, context?.authToken),
+      makeAttioRequest("/v2/workspace_members", {}, context?.authToken),
     ]);
 
     const workspaceInfo = {
@@ -56,9 +56,9 @@ export async function introspectWorkspace(): Promise<McpResponse> {
   }
 }
 
-export async function getWorkspaceMembers(): Promise<McpResponse> {
+export async function getWorkspaceMembers(context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest("/v2/workspace_members");
+    const response = await makeAttioRequest("/v2/workspace_members", {}, context?.authToken);
     return createMcpResponse(
       response,
       `Workspace Members:\n\n${JSON.stringify(response, null, 2)}`,
@@ -70,10 +70,12 @@ export async function getWorkspaceMembers(): Promise<McpResponse> {
 
 export async function getWorkspaceMember(args: {
   workspace_member_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/workspace_members/${args.workspace_member_id}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -84,9 +86,9 @@ export async function getWorkspaceMember(args: {
   }
 }
 
-export async function getSelf(): Promise<McpResponse> {
+export async function getSelf(context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest("/v2/self");
+    const response = await makeAttioRequest("/v2/self", {}, context?.authToken);
     return createMcpResponse(
       response,
       `Self information:\n\n${JSON.stringify(response, null, 2)}`,

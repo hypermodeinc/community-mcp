@@ -156,6 +156,7 @@ export const deleteWebhookSchema = {
 
 export async function searchUsers(
   args: { query?: any } = {},
+  context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
     const { query = {} } = args;
@@ -166,7 +167,7 @@ export async function searchUsers(
         offset: query.offset || 0,
         sorts: query.sorts || [],
       }),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -177,10 +178,12 @@ export async function searchUsers(
   }
 }
 
-export async function getUser(args: { user_id: string }): Promise<McpResponse> {
+export async function getUser(args: { user_id: string }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/users/records/${args.user_id}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -191,12 +194,12 @@ export async function getUser(args: { user_id: string }): Promise<McpResponse> {
   }
 }
 
-export async function createUser(args: { data: any }): Promise<McpResponse> {
+export async function createUser(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/objects/users/records`, {
       method: "POST",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -210,7 +213,7 @@ export async function createUser(args: { data: any }): Promise<McpResponse> {
 export async function updateUser(args: {
   user_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/users/records/${args.user_id}`,
@@ -218,6 +221,7 @@ export async function updateUser(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -231,11 +235,11 @@ export async function updateUser(args: {
 
 export async function deleteUser(args: {
   user_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(`/v2/objects/users/records/${args.user_id}`, {
       method: "DELETE",
-    });
+    }, context?.authToken);
 
     return createMcpResponse(null, `Successfully deleted user ${args.user_id}`);
   } catch (error) {
@@ -249,6 +253,7 @@ export async function deleteUser(args: {
 
 export async function searchWorkspaces(
   args: { query?: any } = {},
+  context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
     const { query = {} } = args;
@@ -262,6 +267,7 @@ export async function searchWorkspaces(
           sorts: query.sorts || [],
         }),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -275,10 +281,12 @@ export async function searchWorkspaces(
 
 export async function getWorkspace(args: {
   workspace_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/workspaces/records/${args.workspace_id}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -291,12 +299,12 @@ export async function getWorkspace(args: {
 
 export async function createWorkspace(args: {
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/objects/workspaces/records`, {
       method: "POST",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -310,7 +318,7 @@ export async function createWorkspace(args: {
 export async function updateWorkspace(args: {
   workspace_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/workspaces/records/${args.workspace_id}`,
@@ -318,6 +326,7 @@ export async function updateWorkspace(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -331,13 +340,14 @@ export async function updateWorkspace(args: {
 
 export async function deleteWorkspace(args: {
   workspace_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(
       `/v2/objects/workspaces/records/${args.workspace_id}`,
       {
         method: "DELETE",
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -355,9 +365,9 @@ export async function deleteWorkspace(args: {
 
 export async function getMeeting(args: {
   meeting_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/meetings/${args.meeting_id}`);
+    const response = await makeAttioRequest(`/v2/meetings/${args.meeting_id}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Meeting details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -371,9 +381,9 @@ export async function getMeeting(args: {
 // WEBHOOKS ACTIONS
 // ===============================
 
-export async function listWebhooks(): Promise<McpResponse> {
+export async function listWebhooks(context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest("/v2/webhooks");
+    const response = await makeAttioRequest("/v2/webhooks", {}, context?.authToken);
     return createMcpResponse(
       response,
       `Webhooks:\n\n${JSON.stringify(response, null, 2)}`,
@@ -383,12 +393,12 @@ export async function listWebhooks(): Promise<McpResponse> {
   }
 }
 
-export async function createWebhook(args: { data: any }): Promise<McpResponse> {
+export async function createWebhook(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest("/v2/webhooks", {
       method: "POST",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -401,9 +411,9 @@ export async function createWebhook(args: { data: any }): Promise<McpResponse> {
 
 export async function getWebhook(args: {
   webhook_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/webhooks/${args.webhook_id}`);
+    const response = await makeAttioRequest(`/v2/webhooks/${args.webhook_id}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Webhook details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -416,12 +426,12 @@ export async function getWebhook(args: {
 export async function updateWebhook(args: {
   webhook_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/webhooks/${args.webhook_id}`, {
       method: "PATCH",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -434,11 +444,11 @@ export async function updateWebhook(args: {
 
 export async function deleteWebhook(args: {
   webhook_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(`/v2/webhooks/${args.webhook_id}`, {
       method: "DELETE",
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       null,
