@@ -60,6 +60,7 @@ export async function listThreads(
     entry_id?: string;
     limit?: number;
   } = {},
+  context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
@@ -67,7 +68,7 @@ export async function listThreads(
     if (args.entry_id) queryParams.append("entry_id", args.entry_id);
     if (args.limit) queryParams.append("limit", args.limit.toString());
 
-    const response = await makeAttioRequest(`/v2/threads?${queryParams}`);
+    const response = await makeAttioRequest(`/v2/threads?${queryParams}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Threads:\n\n${JSON.stringify(response, null, 2)}`,
@@ -79,9 +80,9 @@ export async function listThreads(
 
 export async function getThread(args: {
   thread_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/threads/${args.thread_id}`);
+    const response = await makeAttioRequest(`/v2/threads/${args.thread_id}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Thread details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -96,7 +97,7 @@ export async function createComment(args: {
   record_id?: string;
   entry_id?: string;
   thread_id?: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const { content, record_id, entry_id, thread_id } = args;
     let commentData: any = {
@@ -127,7 +128,7 @@ export async function createComment(args: {
       body: JSON.stringify({
         data: commentData,
       }),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -140,9 +141,9 @@ export async function createComment(args: {
 
 export async function getComment(args: {
   comment_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/comments/${args.comment_id}`);
+    const response = await makeAttioRequest(`/v2/comments/${args.comment_id}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Comment details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -154,11 +155,11 @@ export async function getComment(args: {
 
 export async function deleteComment(args: {
   comment_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(`/v2/comments/${args.comment_id}`, {
       method: "DELETE",
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       null,

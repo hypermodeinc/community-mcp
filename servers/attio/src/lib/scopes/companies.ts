@@ -161,6 +161,7 @@ export const getCompanyEntriesSchema = {
 
 export async function searchCompanies(
   args: { query?: any } = {},
+  context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
     const { query = {} } = args;
@@ -187,6 +188,7 @@ export async function searchCompanies(
         method: "POST",
         body: JSON.stringify(requestBody),
       },
+      context?.authToken,
     );
 
     const companyCount = response.data?.length || 0;
@@ -208,10 +210,12 @@ export async function searchCompanies(
 
 export async function getCompany(args: {
   company_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/companies/records/${args.company_id}`,
+      {},
+      context?.authToken,
     );
 
     // Extract key information for better display
@@ -236,12 +240,12 @@ export async function getCompany(args: {
   }
 }
 
-export async function createCompany(args: { data: any }): Promise<McpResponse> {
+export async function createCompany(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/objects/companies/records`, {
       method: "POST",
       body: JSON.stringify({ data: args.data }),
-    });
+    }, context?.authToken);
 
     const company = response.data;
     const summary = {
@@ -263,7 +267,7 @@ export async function createCompany(args: { data: any }): Promise<McpResponse> {
 export async function updateCompany(args: {
   company_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/companies/records/${args.company_id}`,
@@ -271,6 +275,7 @@ export async function updateCompany(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     const company = response.data;
@@ -292,7 +297,7 @@ export async function updateCompany(args: {
 export async function assertCompany(args: {
   data: any;
   matching_attribute?: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.matching_attribute) {
@@ -308,6 +313,7 @@ export async function assertCompany(args: {
         method: "PUT",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     const company = response.data;
@@ -329,11 +335,11 @@ export async function assertCompany(args: {
 
 export async function deleteCompany(args: {
   company_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(`/v2/objects/companies/records/${args.company_id}`, {
       method: "DELETE",
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       { deleted: true, company_id: args.company_id },
@@ -351,7 +357,7 @@ export async function getCompanyAttributeValues(args: {
   show_historic?: boolean;
   limit?: number;
   offset?: number;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.show_historic) queryParams.append("show_historic", "true");
@@ -360,6 +366,8 @@ export async function getCompanyAttributeValues(args: {
 
     const response = await makeAttioRequest(
       `/v2/objects/companies/records/${args.company_id}/attributes/${args.attribute}/values?${queryParams}`,
+      {},
+      context?.authToken,
     );
 
     const valueCount = response.data?.length || 0;
@@ -384,7 +392,7 @@ export async function getCompanyEntries(args: {
   company_id: string;
   limit?: number;
   offset?: number;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.limit)
@@ -393,6 +401,8 @@ export async function getCompanyEntries(args: {
 
     const response = await makeAttioRequest(
       `/v2/objects/companies/records/${args.company_id}/entries?${queryParams}`,
+      {},
+      context?.authToken,
     );
 
     const entryCount = response.data?.length || 0;

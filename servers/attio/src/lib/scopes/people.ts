@@ -64,6 +64,7 @@ export const deletePersonSchema = {
 
 export async function searchPeople(
   args: { query?: any } = {},
+  context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
     const { query = {} } = args;
@@ -77,6 +78,7 @@ export async function searchPeople(
           sorts: query.sorts || [],
         }),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -90,10 +92,12 @@ export async function searchPeople(
 
 export async function getPerson(args: {
   person_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/people/records/${args.person_id}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -104,12 +108,12 @@ export async function getPerson(args: {
   }
 }
 
-export async function createPerson(args: { data: any }): Promise<McpResponse> {
+export async function createPerson(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/objects/people/records`, {
       method: "POST",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -123,7 +127,7 @@ export async function createPerson(args: { data: any }): Promise<McpResponse> {
 export async function updatePerson(args: {
   person_id: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/people/records/${args.person_id}`,
@@ -131,6 +135,7 @@ export async function updatePerson(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -144,11 +149,11 @@ export async function updatePerson(args: {
 
 export async function deletePerson(args: {
   person_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(`/v2/objects/people/records/${args.person_id}`, {
       method: "DELETE",
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       null,

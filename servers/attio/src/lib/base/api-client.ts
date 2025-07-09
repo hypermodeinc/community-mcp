@@ -13,13 +13,13 @@ export interface McpResponse {
 export async function makeAttioRequest(
   endpoint: string,
   options: RequestInit = {},
+  authToken?: string,
 ): Promise<any> {
   const baseUrl = process.env["ATTIO_API_BASE_URL"] || "https://api.attio.com";
-  const apiKey = process.env["ATTIO_API_KEY"];
 
-  if (!apiKey) {
+  if (!authToken) {
     throw new Error(
-      "ATTIO_API_KEY environment variable is required. Please set it in your .env.local file.",
+      "Authentication token is required. Please provide a valid Attio API key.",
     );
   }
 
@@ -27,7 +27,7 @@ export async function makeAttioRequest(
     const response = await fetch(`${baseUrl}${endpoint}`, {
       ...options,
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${authToken}`,
         "Content-Type": "application/json",
         ...options.headers,
       },

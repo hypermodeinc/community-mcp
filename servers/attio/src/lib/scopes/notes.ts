@@ -44,13 +44,14 @@ export const deleteNoteSchema = {
 
 export async function listNotes(
   args: { record_id?: string; limit?: number } = {},
+  context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.record_id) queryParams.append("record_id", args.record_id);
     if (args.limit) queryParams.append("limit", args.limit.toString());
 
-    const response = await makeAttioRequest(`/v2/notes?${queryParams}`);
+    const response = await makeAttioRequest(`/v2/notes?${queryParams}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Notes:\n\n${JSON.stringify(response, null, 2)}`,
@@ -60,9 +61,9 @@ export async function listNotes(
   }
 }
 
-export async function getNote(args: { note_id: string }): Promise<McpResponse> {
+export async function getNote(args: { note_id: string }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/notes/${args.note_id}`);
+    const response = await makeAttioRequest(`/v2/notes/${args.note_id}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Note details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -77,7 +78,7 @@ export async function createNote(args: {
   content: string;
   title?: string;
   parent_object?: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const { record_id, content, title, parent_object = "people" } = args;
     const response = await makeAttioRequest("/v2/notes", {
@@ -91,7 +92,7 @@ export async function createNote(args: {
           content,
         },
       }),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -104,11 +105,11 @@ export async function createNote(args: {
 
 export async function deleteNote(args: {
   note_id: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     await makeAttioRequest(`/v2/notes/${args.note_id}`, {
       method: "DELETE",
-    });
+    }, context?.authToken);
 
     return createMcpResponse(null, `Successfully deleted note ${args.note_id}`);
   } catch (error) {

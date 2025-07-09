@@ -129,10 +129,12 @@ export const updateStatusSchema = {
 export async function listAttributes(args: {
   target: string;
   identifier: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -147,7 +149,7 @@ export async function createAttribute(args: {
   target: string;
   identifier: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes`,
@@ -155,6 +157,7 @@ export async function createAttribute(args: {
         method: "POST",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -170,10 +173,12 @@ export async function getAttribute(args: {
   target: string;
   identifier: string;
   attribute: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -189,7 +194,7 @@ export async function updateAttribute(args: {
   identifier: string;
   attribute: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}`,
@@ -197,6 +202,7 @@ export async function updateAttribute(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -213,10 +219,12 @@ export async function listSelectOptions(args: {
   target: string;
   identifier: string;
   attribute: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/options`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -232,7 +240,7 @@ export async function createSelectOption(args: {
   identifier: string;
   attribute: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/options`,
@@ -240,6 +248,7 @@ export async function createSelectOption(args: {
         method: "POST",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -257,7 +266,7 @@ export async function updateSelectOption(args: {
   attribute: string;
   option: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/options/${args.option}`,
@@ -265,6 +274,7 @@ export async function updateSelectOption(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -281,10 +291,12 @@ export async function listStatuses(args: {
   target: string;
   identifier: string;
   attribute: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/statuses`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
@@ -300,7 +312,7 @@ export async function createStatus(args: {
   identifier: string;
   attribute: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/statuses`,
@@ -308,6 +320,7 @@ export async function createStatus(args: {
         method: "POST",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(
@@ -325,7 +338,7 @@ export async function updateStatus(args: {
   attribute: string;
   status: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/statuses/${args.status}`,
@@ -333,6 +346,7 @@ export async function updateStatus(args: {
         method: "PATCH",
         body: JSON.stringify(args.data),
       },
+      context?.authToken,
     );
 
     return createMcpResponse(

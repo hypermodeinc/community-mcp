@@ -61,9 +61,9 @@ export const getObjectAttributesSchema = {
 // OBJECTS ACTIONS
 // ===============================
 
-export async function listObjects(): Promise<McpResponse> {
+export async function listObjects(context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest("/v2/objects");
+    const response = await makeAttioRequest("/v2/objects", {}, context?.authToken);
     return createMcpResponse(
       response,
       `Objects in workspace:\n\n${JSON.stringify(response, null, 2)}`,
@@ -75,9 +75,9 @@ export async function listObjects(): Promise<McpResponse> {
 
 export async function getObject(args: {
   object: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/objects/${args.object}`);
+    const response = await makeAttioRequest(`/v2/objects/${args.object}`, {}, context?.authToken);
     return createMcpResponse(
       response,
       `Object details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -87,12 +87,12 @@ export async function getObject(args: {
   }
 }
 
-export async function createObject(args: { data: any }): Promise<McpResponse> {
+export async function createObject(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest("/v2/objects", {
       method: "POST",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -106,12 +106,12 @@ export async function createObject(args: { data: any }): Promise<McpResponse> {
 export async function updateObject(args: {
   object: string;
   data: any;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(`/v2/objects/${args.object}`, {
       method: "PATCH",
       body: JSON.stringify(args.data),
-    });
+    }, context?.authToken);
 
     return createMcpResponse(
       response,
@@ -124,10 +124,12 @@ export async function updateObject(args: {
 
 export async function getObjectAttributes(args: {
   object: string;
-}): Promise<McpResponse> {
+}, context?: { authToken?: string }): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/attributes`,
+      {},
+      context?.authToken,
     );
     return createMcpResponse(
       response,
