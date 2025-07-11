@@ -5,10 +5,7 @@ import {
   createErrorResponse,
   McpResponse,
 } from "../base/api-client";
-
-// ===============================
-// DEALS SCHEMAS
-// ===============================
+import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
 
 export const searchDealsSchema = {
   query: z
@@ -16,14 +13,17 @@ export const searchDealsSchema = {
       sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
       limit: z
         .number()
-        .optional()
-        .describe("Maximum number of deals to return (default: 25, max: 500)"),
+        .min(1)
+        .max(GLOBAL_SEARCH_LIMIT)
+        .describe(
+          `Maximum number of deals to return (required, max: ${GLOBAL_SEARCH_LIMIT})`,
+        ),
       offset: z
         .number()
+        .min(0)
         .optional()
         .describe("Number of deals to skip for pagination"),
     })
-    .optional()
     .describe("Search criteria, filters, and sorting options"),
 };
 
@@ -91,24 +91,28 @@ export const getDealEntriesSchema = {
   offset: z.number().optional().describe("Number of results to skip"),
 };
 
-// ===============================
-// DEALS ACTIONS
-// ===============================
-
 export async function searchDeals(
-  args: { query?: any } = {},
+  args: { query: any },
   context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
-    const { query = {} } = args;
-    const response = await makeAttioRequest(`/v2/objects/deals/records/query`, {
-      method: "POST",
-      body: JSON.stringify({
-        sorts: query.sorts || [],
-        limit: Math.min(query.limit || 25, 500),
-        offset: query.offset || 0,
-      }),
-    }, context?.authToken);
+    const { query } = args;
+    const pagination = validatePagination(query);
+
+    const requestBody: any = {
+      sorts: query.sorts || [],
+      limit: pagination.limit,
+      offset: pagination.offset,
+    };
+
+    const response = await makeAttioRequest(
+      `/v2/objects/deals/records/query`,
+      {
+        method: "POST",
+        body: JSON.stringify(requestBody),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -119,7 +123,10 @@ export async function searchDeals(
   }
 }
 
-export async function getDeal(args: { deal_id: string }, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getDeal(
+  args: { deal_id: string },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/deals/records/${args.deal_id}`,
@@ -135,7 +142,10 @@ export async function getDeal(args: { deal_id: string }, context?: { authToken?:
   }
 }
 
-export async function createDeal(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createDeal(
+  args: { data: any },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     // Ensure the data structure matches the API expectation
     const requestBody = {
@@ -144,10 +154,14 @@ export async function createDeal(args: { data: any }, context?: { authToken?: st
       },
     };
 
-    const response = await makeAttioRequest(`/v2/objects/deals/records`, {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/objects/deals/records`,
+      {
+        method: "POST",
+        body: JSON.stringify(requestBody),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -158,10 +172,13 @@ export async function createDeal(args: { data: any }, context?: { authToken?: st
   }
 }
 
-export async function updateDeal(args: {
-  deal_id: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updateDeal(
+  args: {
+    deal_id: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/deals/records/${args.deal_id}`,
@@ -181,12 +198,19 @@ export async function updateDeal(args: {
   }
 }
 
-export async function assertDeal(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
+export async function assertDeal(
+  args: { data: any },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/objects/deals/records`, {
-      method: "PUT",
-      body: JSON.stringify(args.data),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/objects/deals/records`,
+      {
+        method: "PUT",
+        body: JSON.stringify(args.data),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -197,13 +221,20 @@ export async function assertDeal(args: { data: any }, context?: { authToken?: st
   }
 }
 
-export async function deleteDeal(args: {
-  deal_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function deleteDeal(
+  args: {
+    deal_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    await makeAttioRequest(`/v2/objects/deals/records/${args.deal_id}`, {
-      method: "DELETE",
-    }, context?.authToken);
+    await makeAttioRequest(
+      `/v2/objects/deals/records/${args.deal_id}`,
+      {
+        method: "DELETE",
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(null, `Successfully deleted deal ${args.deal_id}`);
   } catch (error) {
@@ -211,13 +242,16 @@ export async function deleteDeal(args: {
   }
 }
 
-export async function getDealAttributeValues(args: {
-  deal_id: string;
-  attribute: string;
-  show_historic?: boolean;
-  limit?: number;
-  offset?: number;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getDealAttributeValues(
+  args: {
+    deal_id: string;
+    attribute: string;
+    show_historic?: boolean;
+    limit?: number;
+    offset?: number;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.show_historic) queryParams.append("show_historic", "true");
@@ -238,11 +272,14 @@ export async function getDealAttributeValues(args: {
   }
 }
 
-export async function getDealEntries(args: {
-  deal_id: string;
-  limit?: number;
-  offset?: number;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getDealEntries(
+  args: {
+    deal_id: string;
+    limit?: number;
+    offset?: number;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.limit)

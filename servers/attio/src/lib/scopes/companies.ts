@@ -5,6 +5,7 @@ import {
   createErrorResponse,
   McpResponse,
 } from "../base/api-client";
+import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
 
 // ===============================
 // COMPANIES SCHEMAS
@@ -35,10 +36,9 @@ export const searchCompaniesSchema = {
       limit: z
         .number()
         .min(1)
-        .max(500)
-        .optional()
+        .max(GLOBAL_SEARCH_LIMIT)
         .describe(
-          "Maximum number of companies to return (default: 25, max: 500)",
+          `Maximum number of companies to return (required, max: ${GLOBAL_SEARCH_LIMIT})`,
         ),
       offset: z
         .number()
@@ -46,7 +46,6 @@ export const searchCompaniesSchema = {
         .optional()
         .describe("Number of companies to skip for pagination"),
     })
-    .optional()
     .describe("Search criteria, filters, and sorting options"),
 };
 
@@ -128,8 +127,10 @@ export const getCompanyAttributeValuesSchema = {
   limit: z
     .number()
     .min(1)
-    .optional()
-    .describe("Maximum number of results to return"),
+    .max(GLOBAL_SEARCH_LIMIT)
+    .describe(
+      `Maximum number of results to return (required, max: ${GLOBAL_SEARCH_LIMIT})`,
+    ),
   offset: z
     .number()
     .min(0)
@@ -145,9 +146,10 @@ export const getCompanyEntriesSchema = {
   limit: z
     .number()
     .min(1)
-    .max(1000)
-    .optional()
-    .describe("Maximum number of results to return (default: 100, max: 1000)"),
+    .max(GLOBAL_SEARCH_LIMIT)
+    .describe(
+      `Maximum number of results to return (required, max: ${GLOBAL_SEARCH_LIMIT})`,
+    ),
   offset: z
     .number()
     .min(0)
@@ -155,21 +157,17 @@ export const getCompanyEntriesSchema = {
     .describe("Number of results to skip for pagination"),
 };
 
-// ===============================
-// COMPANIES ACTIONS - Updated implementations
-// ===============================
-
 export async function searchCompanies(
-  args: { query?: any } = {},
+  args: { query: any },
   context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
-    const { query = {} } = args;
+    const { query } = args;
+    const pagination = validatePagination(query);
 
-    // Build request body according to API documentation
     const requestBody: any = {
-      limit: Math.min(query.limit || 25, 500),
-      offset: query.offset || 0,
+      limit: pagination.limit,
+      offset: pagination.offset,
     };
 
     // Add filter if provided
@@ -208,9 +206,12 @@ export async function searchCompanies(
   }
 }
 
-export async function getCompany(args: {
-  company_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getCompany(
+  args: {
+    company_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/companies/records/${args.company_id}`,
@@ -240,12 +241,19 @@ export async function getCompany(args: {
   }
 }
 
-export async function createCompany(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createCompany(
+  args: { data: any },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/objects/companies/records`, {
-      method: "POST",
-      body: JSON.stringify({ data: args.data }),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/objects/companies/records`,
+      {
+        method: "POST",
+        body: JSON.stringify({ data: args.data }),
+      },
+      context?.authToken,
+    );
 
     const company = response.data;
     const summary = {
@@ -264,10 +272,13 @@ export async function createCompany(args: { data: any }, context?: { authToken?:
   }
 }
 
-export async function updateCompany(args: {
-  company_id: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updateCompany(
+  args: {
+    company_id: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/companies/records/${args.company_id}`,
@@ -294,10 +305,13 @@ export async function updateCompany(args: {
   }
 }
 
-export async function assertCompany(args: {
-  data: any;
-  matching_attribute?: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function assertCompany(
+  args: {
+    data: any;
+    matching_attribute?: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.matching_attribute) {
@@ -333,13 +347,20 @@ export async function assertCompany(args: {
   }
 }
 
-export async function deleteCompany(args: {
-  company_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function deleteCompany(
+  args: {
+    company_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    await makeAttioRequest(`/v2/objects/companies/records/${args.company_id}`, {
-      method: "DELETE",
-    }, context?.authToken);
+    await makeAttioRequest(
+      `/v2/objects/companies/records/${args.company_id}`,
+      {
+        method: "DELETE",
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       { deleted: true, company_id: args.company_id },
@@ -350,19 +371,26 @@ export async function deleteCompany(args: {
   }
 }
 
-// New functions based on API documentation
-export async function getCompanyAttributeValues(args: {
-  company_id: string;
-  attribute: string;
-  show_historic?: boolean;
-  limit?: number;
-  offset?: number;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getCompanyAttributeValues(
+  args: {
+    company_id: string;
+    attribute: string;
+    show_historic?: boolean;
+    limit: number;
+    offset?: number;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
+    const pagination = validatePagination({
+      limit: args.limit,
+      offset: args.offset,
+    });
+
     const queryParams = new URLSearchParams();
     if (args.show_historic) queryParams.append("show_historic", "true");
-    if (args.limit) queryParams.append("limit", args.limit.toString());
-    if (args.offset) queryParams.append("offset", args.offset.toString());
+    queryParams.append("limit", pagination.limit.toString());
+    queryParams.append("offset", pagination.offset.toString());
 
     const response = await makeAttioRequest(
       `/v2/objects/companies/records/${args.company_id}/attributes/${args.attribute}/values?${queryParams}`,
@@ -388,16 +416,23 @@ export async function getCompanyAttributeValues(args: {
   }
 }
 
-export async function getCompanyEntries(args: {
-  company_id: string;
-  limit?: number;
-  offset?: number;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getCompanyEntries(
+  args: {
+    company_id: string;
+    limit: number;
+    offset?: number;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
+    const pagination = validatePagination({
+      limit: args.limit,
+      offset: args.offset,
+    });
+
     const queryParams = new URLSearchParams();
-    if (args.limit)
-      queryParams.append("limit", Math.min(args.limit, 1000).toString());
-    if (args.offset) queryParams.append("offset", args.offset.toString());
+    queryParams.append("limit", pagination.limit.toString());
+    queryParams.append("offset", pagination.offset.toString());
 
     const response = await makeAttioRequest(
       `/v2/objects/companies/records/${args.company_id}/entries?${queryParams}`,
@@ -420,10 +455,6 @@ export async function getCompanyEntries(args: {
     return createErrorResponse(error, "getting company entries");
   }
 }
-
-// ===============================
-// COMPANIES TOOL DEFINITIONS - Updated
-// ===============================
 
 export const companiesToolDefinitions = {
   search_companies: {

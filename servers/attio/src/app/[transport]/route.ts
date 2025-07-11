@@ -1,12 +1,16 @@
-import { createMcpHandler, experimental_withMcpAuth as withMcpAuth } from "@vercel/mcp-adapter";
+import {
+  createMcpHandler,
+  experimental_withMcpAuth as withMcpAuth,
+} from "@vercel/mcp-adapter";
 import { allToolDefinitions, allActions } from "../../lib/scopes";
 import { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
+import { formatMcpResponse } from "../../lib/utils/json-formatter";
 
 const mcpHandler = createMcpHandler(
   async (server) => {
     const registerTool = (
       name: string,
-      action: (args: any, context?: { authToken?: string } | { authToken?: string }) => Promise<any>,
+      action: (args: any, context?: { authToken?: string }) => Promise<any>,
     ) => {
       const toolDef =
         allToolDefinitions[name as keyof typeof allToolDefinitions];
@@ -17,9 +21,11 @@ const mcpHandler = createMcpHandler(
       const schema = toolDef.schema || null;
 
       if (Object.keys(toolDef.schema || {}).length === 0) {
+        // Tools with no arguments
         server.tool(name, toolDef.description, async (extra) => {
           try {
-            return await action({ authToken: extra.authInfo?.token });
+            const response = await action({ authToken: extra.authInfo?.token });
+            return formatMcpResponse(response);
           } catch (error) {
             console.error(`Error in ${name}:`, error);
             return {
@@ -33,12 +39,15 @@ const mcpHandler = createMcpHandler(
           }
         });
       } else {
+        // Tools with arguments
         // @ts-ignore
         server.tool(name, toolDef.description, schema, async (args, extra) => {
           try {
-            // Ensure args is always an object, even if empty
             const safeArgs = args === undefined ? {} : args;
-            return await action(safeArgs, { authToken: extra.authInfo?.token });
+            const response = await action(safeArgs, {
+              authToken: extra.authInfo?.token,
+            });
+            return formatMcpResponse(response);
           } catch (error) {
             console.error(`Error in ${name}:`, error);
             return {
@@ -54,7 +63,7 @@ const mcpHandler = createMcpHandler(
       }
     };
 
-    // Register test tools (these have special inline handlers)
+    // Register test tools (special case)
     server.tool(
       "test_connection",
       allToolDefinitions.test_connection.description,
@@ -69,7 +78,7 @@ const mcpHandler = createMcpHandler(
       }),
     );
 
-    // Register all other tools dynamically
+    // Register all other tools dynamically with the wrapper
     Object.keys(allActions).forEach((actionName) => {
       if (actionName !== "test_connection") {
         registerTool(
@@ -88,7 +97,7 @@ const mcpHandler = createMcpHandler(
         ]),
       ),
       auth: {
-        type: 'bearer',
+        type: "bearer",
         required: true,
       },
     },
@@ -97,27 +106,23 @@ const mcpHandler = createMcpHandler(
     basePath: "",
     verboseLogs: true,
     maxDuration: 60,
-    disableSse: true, // Disable SSE for now
+    disableSse: true,
   },
 );
 
-const verifyToken = async (req: Request, bearerToken?: string): Promise<AuthInfo | undefined> => {
+const verifyToken = async (
+  req: Request,
+  bearerToken?: string,
+): Promise<AuthInfo | undefined> => {
   if (!bearerToken) return undefined;
-  
+
   return {
-      token: bearerToken,
-      clientId: '',
-      scopes: [],
+    token: bearerToken,
+    clientId: "",
+    scopes: [],
   };
-}
-
-const authHandler = withMcpAuth(
-  mcpHandler,
-  verifyToken
-);
-
-export {
-  authHandler as GET,
-  authHandler as POST,
-  authHandler as DELETE,
 };
+
+const authHandler = withMcpAuth(mcpHandler, verifyToken);
+
+export { authHandler as GET, authHandler as POST, authHandler as DELETE };

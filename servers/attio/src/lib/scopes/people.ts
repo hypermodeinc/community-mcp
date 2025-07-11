@@ -5,25 +5,25 @@ import {
   createErrorResponse,
   McpResponse,
 } from "../base/api-client";
-
-// ===============================
-// PEOPLE SCHEMAS
-// ===============================
+import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
 
 export const searchPeopleSchema = {
   query: z
     .object({
       limit: z
         .number()
-        .optional()
-        .describe("Maximum number of people to return (default: 25)"),
+        .min(1)
+        .max(GLOBAL_SEARCH_LIMIT)
+        .describe(
+          `Maximum number of people to return (required, max: ${GLOBAL_SEARCH_LIMIT})`,
+        ),
       offset: z
         .number()
+        .min(0)
         .optional()
         .describe("Number of people to skip for pagination"),
       sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
     })
-    .optional()
     .describe("Search criteria, filters, and sorting options"),
 };
 
@@ -58,23 +58,21 @@ export const deletePersonSchema = {
   person_id: z.string().describe("The ID of the person to delete"),
 };
 
-// ===============================
-// PEOPLE ACTIONS
-// ===============================
-
 export async function searchPeople(
-  args: { query?: any } = {},
+  args: { query: any },
   context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
-    const { query = {} } = args;
+    const { query } = args;
+    const pagination = validatePagination(query);
+
     const response = await makeAttioRequest(
       `/v2/objects/people/records/query`,
       {
         method: "POST",
         body: JSON.stringify({
-          limit: query.limit || 25,
-          offset: query.offset || 0,
+          limit: pagination.limit,
+          offset: pagination.offset,
           sorts: query.sorts || [],
         }),
       },
@@ -90,9 +88,12 @@ export async function searchPeople(
   }
 }
 
-export async function getPerson(args: {
-  person_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getPerson(
+  args: {
+    person_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/people/records/${args.person_id}`,
@@ -108,12 +109,19 @@ export async function getPerson(args: {
   }
 }
 
-export async function createPerson(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createPerson(
+  args: { data: any },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/objects/people/records`, {
-      method: "POST",
-      body: JSON.stringify(args.data),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/objects/people/records`,
+      {
+        method: "POST",
+        body: JSON.stringify(args.data),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -124,10 +132,13 @@ export async function createPerson(args: { data: any }, context?: { authToken?: 
   }
 }
 
-export async function updatePerson(args: {
-  person_id: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updatePerson(
+  args: {
+    person_id: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/people/records/${args.person_id}`,
@@ -147,13 +158,20 @@ export async function updatePerson(args: {
   }
 }
 
-export async function deletePerson(args: {
-  person_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function deletePerson(
+  args: {
+    person_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    await makeAttioRequest(`/v2/objects/people/records/${args.person_id}`, {
-      method: "DELETE",
-    }, context?.authToken);
+    await makeAttioRequest(
+      `/v2/objects/people/records/${args.person_id}`,
+      {
+        method: "DELETE",
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       null,
