@@ -1,0 +1,2686 @@
+{
+  "tools": [
+    {
+      "name": "test_connection",
+      "description": "Test connection to Attio MCP server",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Optional test message"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "introspect_workspace",
+      "description": "Get comprehensive information about the Attio workspace structure, including objects, attributes, lists, and current user permissions",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "get_workspace_members",
+      "description": "List all workspace members and their details",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "get_workspace_member",
+      "description": "Get details of a specific workspace member",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "workspace_member_id": {
+            "type": "string",
+            "description": "The ID of the workspace member to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspace_member_id"
+        ]
+      }
+    },
+    {
+      "name": "get_self",
+      "description": "Get information about the current API token and workspace",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "list_objects",
+      "description": "List all objects (both system and custom) in the workspace",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "get_object",
+      "description": "Get detailed information about a specific object",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "Object ID or slug (e.g., 'people', 'companies', 'opportunities')"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object"
+        ]
+      }
+    },
+    {
+      "name": "create_object",
+      "description": "Create a new custom object in the workspace",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "api_slug": {
+                "type": "string",
+                "description": "API slug for the object"
+              },
+              "singular_noun": {
+                "type": "string",
+                "description": "Singular noun for the object"
+              },
+              "plural_noun": {
+                "type": "string",
+                "description": "Plural noun for the object"
+              },
+              "icon": {
+                "type": "string",
+                "description": "Icon for the object"
+              },
+              "is_enabled": {
+                "type": "boolean",
+                "description": "Whether the object is enabled"
+              }
+            },
+            "required": [
+              "api_slug",
+              "singular_noun",
+              "plural_noun"
+            ],
+            "additionalProperties": false,
+            "description": "Object data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_object",
+      "description": "Update an existing object",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "Object ID or slug"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "singular_noun": {
+                "type": "string",
+                "description": "Singular noun for the object"
+              },
+              "plural_noun": {
+                "type": "string",
+                "description": "Plural noun for the object"
+              },
+              "icon": {
+                "type": "string",
+                "description": "Icon for the object"
+              },
+              "is_enabled": {
+                "type": "boolean",
+                "description": "Whether the object is enabled"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Object data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "get_object_attributes",
+      "description": "List all attributes for a specific object",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "Object ID or slug"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object"
+        ]
+      }
+    },
+    {
+      "name": "list_attributes",
+      "description": "List all attributes for a specific object or list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier"
+        ]
+      }
+    },
+    {
+      "name": "create_attribute",
+      "description": "Create a new attribute on an object or list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Attribute title"
+              },
+              "api_slug": {
+                "type": "string",
+                "description": "API slug for the attribute"
+              },
+              "type": {
+                "type": "string",
+                "description": "Attribute type"
+              },
+              "is_required": {
+                "type": "boolean",
+                "description": "Whether the attribute is required"
+              },
+              "is_multiselect": {
+                "type": "boolean",
+                "description": "Whether the attribute allows multiple values"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Additional configuration"
+              }
+            },
+            "required": [
+              "title",
+              "api_slug",
+              "type"
+            ],
+            "additionalProperties": false,
+            "description": "Attribute data"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "get_attribute",
+      "description": "Get information about a specific attribute",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Attribute ID or slug"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "attribute"
+        ]
+      }
+    },
+    {
+      "name": "update_attribute",
+      "description": "Update an existing attribute",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Attribute ID or slug"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Attribute title"
+              },
+              "is_required": {
+                "type": "boolean",
+                "description": "Whether the attribute is required"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Additional configuration"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Attribute data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "attribute",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "list_select_options",
+      "description": "List all select options for a select attribute",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Attribute ID or slug"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "attribute"
+        ]
+      }
+    },
+    {
+      "name": "create_select_option",
+      "description": "Create a new select option for a select attribute",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Attribute ID or slug"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Option title"
+              },
+              "color": {
+                "type": "string",
+                "description": "Option color"
+              }
+            },
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false,
+            "description": "Select option data"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "attribute",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_select_option",
+      "description": "Update an existing select option",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Attribute ID or slug"
+          },
+          "option": {
+            "type": "string",
+            "description": "Option ID"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Option title"
+              },
+              "color": {
+                "type": "string",
+                "description": "Option color"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Select option data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "attribute",
+          "option",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "list_statuses",
+      "description": "List all statuses for a status attribute",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Attribute ID or slug"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "attribute"
+        ]
+      }
+    },
+    {
+      "name": "create_status",
+      "description": "Create a new status for a status attribute",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Attribute ID or slug"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Status title"
+              },
+              "color": {
+                "type": "string",
+                "description": "Status color"
+              }
+            },
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false,
+            "description": "Status data"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "attribute",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_status",
+      "description": "Update an existing status",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target type (objects or lists)"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Object or list identifier"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Attribute ID or slug"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status ID"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Status title"
+              },
+              "color": {
+                "type": "string",
+                "description": "Status color"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Status data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "target",
+          "identifier",
+          "attribute",
+          "status",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "search_records",
+      "description": "Search for records in Attio CRM with advanced filtering and sorting options",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type to search (e.g., 'people', 'companies', 'opportunities')"
+          },
+          "query": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Maximum number of records to return (required, max: 10)"
+              },
+              "offset": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Number of records to skip for pagination"
+              },
+              "sorts": {
+                "type": "array",
+                "description": "Array of sort criteria"
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false,
+            "description": "Search criteria, filters, and sorting options"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_record",
+      "description": "Get a specific record by ID with all its data",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type (e.g., 'people', 'companies')"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "The ID of the record to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "record_id"
+        ]
+      }
+    },
+    {
+      "name": "create_record",
+      "description": "Create a new record in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type (e.g., 'people', 'companies', 'opportunities')"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes for the new record"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The record data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_record",
+      "description": "Update an existing record in Attio CRM (appends to multiselect fields)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type (e.g., 'people', 'companies', 'opportunities')"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "The ID of the record to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes to update"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The record data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "record_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "put_update_record",
+      "description": "Update an existing record in Attio CRM (overwrites multiselect fields)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type (e.g., 'people', 'companies', 'opportunities')"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "The ID of the record to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes to overwrite"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The record data to overwrite"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "record_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "upsert_record",
+      "description": "Create or update a record based on matching criteria (assert operation)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes"
+              },
+              "matching_attribute": {
+                "type": "string",
+                "description": "Attribute to match against for existing records"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The record data with matching criteria"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "delete_record",
+      "description": "Delete a record by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "The ID of the record to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "record_id"
+        ]
+      }
+    },
+    {
+      "name": "get_record_attribute_values",
+      "description": "Get all values for a specific attribute on a record",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "The ID of the record"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "The attribute ID or slug"
+          },
+          "show_historic": {
+            "type": "boolean",
+            "description": "Include historic values"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "record_id",
+          "attribute"
+        ]
+      }
+    },
+    {
+      "name": "get_record_entries",
+      "description": "List all list entries for a specific record",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The object type"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "The ID of the record"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "object",
+          "record_id"
+        ]
+      }
+    },
+    {
+      "name": "search_people",
+      "description": "Search for people in Attio CRM with filtering and sorting options",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Maximum number of people to return (required, max: 10)"
+              },
+              "offset": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Number of people to skip for pagination"
+              },
+              "sorts": {
+                "type": "array",
+                "description": "Array of sort criteria"
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false,
+            "description": "Search criteria, filters, and sorting options"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_person",
+      "description": "Get a specific person by ID with all their data",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "person_id": {
+            "type": "string",
+            "description": "The ID of the person to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "person_id"
+        ]
+      }
+    },
+    {
+      "name": "create_person",
+      "description": "Create a new person in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes for the new person (e.g., first_name, last_name, email)"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The person data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_person",
+      "description": "Update an existing person in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "person_id": {
+            "type": "string",
+            "description": "The ID of the person to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes to update"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The person data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "person_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "delete_person",
+      "description": "Delete a person by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "person_id": {
+            "type": "string",
+            "description": "The ID of the person to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "person_id"
+        ]
+      }
+    },
+    {
+      "name": "search_companies",
+      "description": "Search for companies in Attio CRM with advanced filtering and sorting options. Supports complex filters with $and/$or operators, field-specific sorting, and pagination.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "filter": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Filter object to subset records. Supports complex filtering with $and, $or operators"
+              },
+              "sorts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ],
+                      "description": "Sort direction"
+                    },
+                    "attribute": {
+                      "type": "string",
+                      "description": "Attribute to sort by"
+                    },
+                    "field": {
+                      "type": "string",
+                      "description": "Specific field for complex attributes like domains"
+                    }
+                  },
+                  "required": [
+                    "direction",
+                    "attribute"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Array of sort criteria with direction and attribute"
+              },
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Maximum number of companies to return (required, max: 10)"
+              },
+              "offset": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Number of companies to skip for pagination"
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false,
+            "description": "Search criteria, filters, and sorting options"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_company",
+      "description": "Get a specific company by ID with all its data including attributes, values, and metadata",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID of the company record to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "company_id"
+        ]
+      }
+    },
+    {
+      "name": "create_company",
+      "description": "Create a new company in Attio CRM. Standard attributes include: domains, name, description, team, primary_location, categories, foundation_date, employee_range",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes for the new company. Standard attributes include: domains (array), name (string), description (string), team (array of emails), primary_location (string), categories (array), foundation_date (string), employee_range (string), etc."
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The company data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_company",
+      "description": "Update an existing company in Attio CRM. For multiselect attributes, values are appended to existing values",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID of the company record to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes to update. For multiselect attributes, values will be appended to existing values."
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The company data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "company_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "assert_company",
+      "description": "Create or update a company using a unique attribute for matching (default: domains). If company exists, it's updated; otherwise, it's created",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes for the company"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The company data to create or update"
+          },
+          "matching_attribute": {
+            "type": "string",
+            "description": "The ID or slug of the attribute to use for matching existing companies. For companies, 'domains' is the default unique attribute"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "delete_company",
+      "description": "Delete a company by ID. This action cannot be undone",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID of the company record to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "company_id"
+        ]
+      }
+    },
+    {
+      "name": "get_company_attribute_values",
+      "description": "Get all values for a specific attribute on a company record. Supports historic values and pagination. Cannot query historic values for COMINT/enriched attributes",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID of the company record to fetch attribute values for"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "UUID or slug of the attribute to query values for (e.g., 'domains', 'name', 'description')"
+          },
+          "show_historic": {
+            "type": "boolean",
+            "description": "If true, returns all historic values. If false, only current active values. Cannot be true for COMINT/enriched attributes"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Maximum number of results to return (required, max: 10)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "company_id",
+          "attribute",
+          "limit"
+        ]
+      }
+    },
+    {
+      "name": "get_company_entries",
+      "description": "List all list entries across all lists where this company is the parent record. Useful for finding which lists contain this company",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID of the company record to fetch entries for"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Maximum number of results to return (required, max: 10)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "company_id",
+          "limit"
+        ]
+      }
+    },
+    {
+      "name": "search_deals",
+      "description": "Search for deals in Attio CRM with filtering and sorting options",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "sorts": {
+                "type": "array",
+                "description": "Array of sort criteria"
+              },
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Maximum number of deals to return (required, max: 10)"
+              },
+              "offset": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Number of deals to skip for pagination"
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false,
+            "description": "Search criteria, filters, and sorting options"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_deal",
+      "description": "Get a specific deal by ID with all its data",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "deal_id": {
+            "type": "string",
+            "description": "The ID of the deal to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deal_id"
+        ]
+      }
+    },
+    {
+      "name": "create_deal",
+      "description": "Create a new deal in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes for the new deal. Standard attributes include: name (string), stage (string), owner (string/email), value (number), associated_people (array), associated_company (object)"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The deal data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_deal",
+      "description": "Update an existing deal in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "deal_id": {
+            "type": "string",
+            "description": "The ID of the deal to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes to update"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The deal data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deal_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "assert_deal",
+      "description": "Create or update a deal based on matching criteria (assert operation)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes for the deal"
+              },
+              "matching_attribute": {
+                "type": "string",
+                "description": "The ID or slug of the attribute to use to check if a deal already exists. The attribute must be unique."
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The deal data with matching criteria for assert operation"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "delete_deal",
+      "description": "Delete a deal by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "deal_id": {
+            "type": "string",
+            "description": "The ID of the deal to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deal_id"
+        ]
+      }
+    },
+    {
+      "name": "get_deal_attribute_values",
+      "description": "Get all values for a specific attribute on a deal record",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "deal_id": {
+            "type": "string",
+            "description": "The ID of the deal record"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "The attribute ID or slug"
+          },
+          "show_historic": {
+            "type": "boolean",
+            "description": "Include historic values"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of results to skip"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deal_id",
+          "attribute"
+        ]
+      }
+    },
+    {
+      "name": "get_deal_entries",
+      "description": "List all list entries for a specific deal record",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "deal_id": {
+            "type": "string",
+            "description": "The ID of the deal record"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return (default: 100, max: 1000)"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of results to skip"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deal_id"
+        ]
+      }
+    },
+    {
+      "name": "list_lists",
+      "description": "Get all lists in the workspace",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "create_list",
+      "description": "Create a new list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "List name"
+              },
+              "parent_object": {
+                "type": "string",
+                "description": "Parent object ID or slug"
+              },
+              "workspace_access": {
+                "type": "string",
+                "description": "Workspace access level"
+              },
+              "workspace_member_access": {
+                "type": "array",
+                "description": "Workspace member access"
+              }
+            },
+            "required": [
+              "name",
+              "parent_object"
+            ],
+            "additionalProperties": false,
+            "description": "List data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "get_list",
+      "description": "Get details of a specific list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list"
+        ]
+      }
+    },
+    {
+      "name": "update_list",
+      "description": "Update an existing list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "List name"
+              },
+              "workspace_access": {
+                "type": "string",
+                "description": "Workspace access level"
+              },
+              "workspace_member_access": {
+                "type": "array",
+                "description": "Workspace member access"
+              }
+            },
+            "additionalProperties": false,
+            "description": "List data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "search_list_entries",
+      "description": "Search entries in a specific list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "query": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Maximum number of entries to return (max: 10)"
+              },
+              "offset": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Number of entries to skip"
+              },
+              "sorts": {
+                "type": "array",
+                "description": "Sort criteria"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Search criteria and filters"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list"
+        ]
+      }
+    },
+    {
+      "name": "add_to_list",
+      "description": "Add a record to a list as a new entry",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "parent_record": {
+                "type": "string",
+                "description": "ID of the parent record to add to the list"
+              },
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Additional attribute values for the list entry"
+              }
+            },
+            "required": [
+              "parent_record"
+            ],
+            "additionalProperties": false,
+            "description": "Entry data"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "upsert_list_entry",
+      "description": "Create or update a list entry by parent record",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "parent_record": {
+                "type": "string",
+                "description": "ID of the parent record"
+              },
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Attribute values for the list entry"
+              }
+            },
+            "required": [
+              "parent_record"
+            ],
+            "additionalProperties": false,
+            "description": "Entry data"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "remove_from_list",
+      "description": "Remove an entry from a list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "entry_id": {
+            "type": "string",
+            "description": "ID of the entry to remove"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "entry_id"
+        ]
+      }
+    },
+    {
+      "name": "get_list_entry",
+      "description": "Get a specific list entry by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "entry_id": {
+            "type": "string",
+            "description": "ID of the entry to get"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "entry_id"
+        ]
+      }
+    },
+    {
+      "name": "update_list_entry",
+      "description": "Update a list entry (appends to multiselect fields)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "entry_id": {
+            "type": "string",
+            "description": "ID of the entry to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Attribute values to update"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "Updated entry data"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "entry_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "put_update_list_entry",
+      "description": "Update a list entry (overwrites multiselect fields)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "entry_id": {
+            "type": "string",
+            "description": "ID of the entry to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Attribute values to overwrite"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "Entry data to overwrite"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "entry_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "get_list_entry_attribute_values",
+      "description": "Get all values for a specific attribute on a list entry",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "List ID or slug"
+          },
+          "entry_id": {
+            "type": "string",
+            "description": "ID of the entry"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "The attribute ID or slug"
+          },
+          "show_historic": {
+            "type": "boolean",
+            "description": "Include historic values"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "entry_id",
+          "attribute"
+        ]
+      }
+    },
+    {
+      "name": "list_notes",
+      "description": "List notes, optionally filtered by record",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "description": "Optional: filter notes by record ID"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Maximum number of notes to return (required, max: 10)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of notes to skip for pagination"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "limit"
+        ]
+      }
+    },
+    {
+      "name": "get_note",
+      "description": "Get a specific note by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "note_id": {
+            "type": "string",
+            "description": "The ID of the note to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "note_id"
+        ]
+      }
+    },
+    {
+      "name": "create_note",
+      "description": "Create a new note for a record",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "description": "ID of the record to attach the note to"
+          },
+          "content": {
+            "type": "string",
+            "description": "The note content"
+          },
+          "title": {
+            "type": "string",
+            "description": "Optional title for the note"
+          },
+          "parent_object": {
+            "type": "string",
+            "description": "The object type (e.g., 'people', 'companies') - defaults to 'people'"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "record_id",
+          "content"
+        ]
+      }
+    },
+    {
+      "name": "delete_note",
+      "description": "Delete a note by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "note_id": {
+            "type": "string",
+            "description": "The ID of the note to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "note_id"
+        ]
+      }
+    },
+    {
+      "name": "list_tasks",
+      "description": "List all tasks in the workspace",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assignee_id": {
+            "type": "string",
+            "description": "Optional: filter tasks by assignee"
+          },
+          "is_completed": {
+            "type": "boolean",
+            "description": "Optional: filter by completion status"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Maximum number of tasks to return (required, max: 10)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of tasks to skip for pagination"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "limit"
+        ]
+      }
+    },
+    {
+      "name": "get_task",
+      "description": "Get a specific task by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "The ID of the task to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "task_id"
+        ]
+      }
+    },
+    {
+      "name": "create_task",
+      "description": "Create a new task",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The task content/description"
+          },
+          "assignee_id": {
+            "type": "string",
+            "description": "Optional: ID of the workspace member to assign the task to"
+          },
+          "deadline_at": {
+            "type": "string",
+            "description": "Optional: deadline for the task (ISO 8601 format)"
+          },
+          "linked_records": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: array of record IDs to link to the task"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content"
+        ]
+      }
+    },
+    {
+      "name": "update_task",
+      "description": "Update an existing task",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "The ID of the task to update"
+          },
+          "is_completed": {
+            "type": "boolean",
+            "description": "Mark task as completed or incomplete"
+          },
+          "deadline_at": {
+            "type": "string",
+            "description": "Update task deadline (ISO 8601 format)"
+          },
+          "assignees": {
+            "type": "array",
+            "description": "Update task assignees"
+          },
+          "linked_records": {
+            "type": "array",
+            "description": "Update linked records"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "task_id"
+        ]
+      }
+    },
+    {
+      "name": "delete_task",
+      "description": "Delete a task by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "The ID of the task to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "task_id"
+        ]
+      }
+    },
+    {
+      "name": "list_threads",
+      "description": "List comment threads, optionally filtered by record or entry",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "description": "Optional: filter threads by record ID"
+          },
+          "entry_id": {
+            "type": "string",
+            "description": "Optional: filter threads by list entry ID"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Maximum number of threads to return (required, max: 10)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of threads to skip for pagination"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "limit"
+        ]
+      }
+    },
+    {
+      "name": "get_thread",
+      "description": "Get all comments in a thread",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "description": "The ID of the thread to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "thread_id"
+        ]
+      }
+    },
+    {
+      "name": "create_comment",
+      "description": "Create a new comment on a record, list entry, or existing thread",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The comment content"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "Optional: ID of record to comment on (for new thread)"
+          },
+          "entry_id": {
+            "type": "string",
+            "description": "Optional: ID of list entry to comment on (for new thread)"
+          },
+          "thread_id": {
+            "type": "string",
+            "description": "Optional: ID of existing thread to reply to"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content"
+        ]
+      }
+    },
+    {
+      "name": "get_comment",
+      "description": "Get a specific comment by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "string",
+            "description": "The ID of the comment to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "comment_id"
+        ]
+      }
+    },
+    {
+      "name": "delete_comment",
+      "description": "Delete a comment by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "string",
+            "description": "The ID of the comment to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "comment_id"
+        ]
+      }
+    },
+    {
+      "name": "search_users",
+      "description": "Search for users in Attio CRM with filtering and sorting options",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Maximum number of users to return (required, max: 10)"
+              },
+              "offset": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Number of users to skip for pagination"
+              },
+              "sorts": {
+                "type": "array",
+                "description": "Array of sort criteria"
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false,
+            "description": "Search criteria, filters, and sorting options"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_user",
+      "description": "Get a specific user by ID with all their data",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "The ID of the user to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ]
+      }
+    },
+    {
+      "name": "create_user",
+      "description": "Create a new user in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes for the new user"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The user data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_user",
+      "description": "Update an existing user in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "The ID of the user to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes to update"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The user data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "delete_user",
+      "description": "Delete a user by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "The ID of the user to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ]
+      }
+    },
+    {
+      "name": "search_workspaces",
+      "description": "Search for workspaces in Attio CRM with filtering and sorting options",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Maximum number of workspaces to return (required, max: 10)"
+              },
+              "offset": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Number of workspaces to skip for pagination"
+              },
+              "sorts": {
+                "type": "array",
+                "description": "Array of sort criteria"
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false,
+            "description": "Search criteria, filters, and sorting options"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_workspace",
+      "description": "Get a specific workspace by ID with all its data",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string",
+            "description": "The ID of the workspace to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspace_id"
+        ]
+      }
+    },
+    {
+      "name": "create_workspace",
+      "description": "Create a new workspace in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes for the new workspace"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The workspace data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "update_workspace",
+      "description": "Update an existing workspace in Attio CRM",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string",
+            "description": "The ID of the workspace to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "values": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Key-value pairs of attributes to update"
+              }
+            },
+            "required": [
+              "values"
+            ],
+            "additionalProperties": false,
+            "description": "The workspace data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspace_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "delete_workspace",
+      "description": "Delete a workspace by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string",
+            "description": "The ID of the workspace to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspace_id"
+        ]
+      }
+    },
+    {
+      "name": "get_meeting",
+      "description": "Get a specific meeting by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "meeting_id": {
+            "type": "string",
+            "description": "The ID of the meeting to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "meeting_id"
+        ]
+      }
+    },
+    {
+      "name": "list_webhooks",
+      "description": "List all webhooks in the workspace",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "create_webhook",
+      "description": "Create a new webhook",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "Webhook URL"
+              },
+              "subscriptions": {
+                "type": "array",
+                "description": "Webhook subscriptions"
+              }
+            },
+            "required": [
+              "url",
+              "subscriptions"
+            ],
+            "additionalProperties": false,
+            "description": "Webhook data to create"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "get_webhook",
+      "description": "Get a specific webhook by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "webhook_id": {
+            "type": "string",
+            "description": "The ID of the webhook to retrieve"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "webhook_id"
+        ]
+      }
+    },
+    {
+      "name": "update_webhook",
+      "description": "Update an existing webhook",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "webhook_id": {
+            "type": "string",
+            "description": "The ID of the webhook to update"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "Webhook URL"
+              },
+              "subscriptions": {
+                "type": "array",
+                "description": "Webhook subscriptions"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Webhook data to update"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "webhook_id",
+          "data"
+        ]
+      }
+    },
+    {
+      "name": "delete_webhook",
+      "description": "Delete a webhook by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "webhook_id": {
+            "type": "string",
+            "description": "The ID of the webhook to delete"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "webhook_id"
+        ]
+      }
+    }
+  ]
+}
