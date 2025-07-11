@@ -10,7 +10,7 @@ interface McpTool {
   description: string;
   inputSchema: {
     type: "object";
-    properties: Record<string, any>;
+    properties?: Record<string, any>;
     additionalProperties: boolean;
     $schema: string;
     required?: string[];
@@ -31,13 +31,12 @@ function convertToMcpToolsSchema(
         description: definition.description,
         inputSchema: {
           type: "object",
-          properties: {},
           additionalProperties: false,
           $schema: "http://json-schema.org/draft-07/schema#",
         },
       };
 
-      // Convert zod schema to JSON schema using proper library
+      // Only process schema if it exists and has properties
       if (definition.schema && Object.keys(definition.schema).length > 0) {
         try {
           // Create a zod object from the schema definition
@@ -54,17 +53,20 @@ function convertToMcpToolsSchema(
           if (
             jsonSchema.type === "object" &&
             typeof jsonSchema.properties === "object" &&
-            jsonSchema.properties
+            jsonSchema.properties &&
+            Object.keys(jsonSchema.properties).length > 0
           ) {
             tool.inputSchema.properties = jsonSchema.properties;
-            if (Array.isArray(jsonSchema.required)) {
+            if (
+              Array.isArray(jsonSchema.required) &&
+              jsonSchema.required.length > 0
+            ) {
               tool.inputSchema.required = jsonSchema.required;
             }
           }
         } catch (error) {
           console.error(`Error converting schema for tool ${name}:`, error);
-          // Fallback to empty schema
-          tool.inputSchema.properties = {};
+          // Fallback: don't add properties field if there's an error
         }
       }
 
