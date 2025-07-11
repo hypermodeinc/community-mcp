@@ -1,0 +1,48 @@
+name: Update Schema
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "servers/attio/src/lib/scopes/**"
+      - "servers/attio/scripts/extract-tools-schema.ts"
+  workflow_dispatch:
+
+jobs:
+  update-schema:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+
+      - name: Generate schema
+        run: |
+          cd servers/attio
+          pnpm generate:schema
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet servers/attio/tools-schema.json; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add servers/attio/tools-schema.json
+          git commit -m "chore: update tools schema [skip ci]"
+          git push
