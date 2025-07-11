@@ -26,24 +26,23 @@ export const getSelfSchema = {};
 // WORKSPACE ACTIONS
 // ===============================
 
-export async function introspectWorkspace(context?: { authToken?: string }): Promise<McpResponse> {
+export async function introspectWorkspace(context?: {
+  authToken?: string;
+}): Promise<McpResponse> {
   try {
-    const [self, objects, lists, members] = await Promise.all([
+    const [self, objects, lists] = await Promise.all([
       makeAttioRequest("/v2/self", {}, context?.authToken),
       makeAttioRequest("/v2/objects", {}, context?.authToken),
       makeAttioRequest("/v2/lists", {}, context?.authToken),
-      makeAttioRequest("/v2/workspace_members", {}, context?.authToken),
     ]);
 
     const workspaceInfo = {
       workspace: self,
       objects: objects,
       lists: lists,
-      members: members,
       summary: {
         total_objects: objects.data?.length || 0,
         total_lists: lists.data?.length || 0,
-        total_members: members.data?.length || 0,
       },
     };
 
@@ -56,9 +55,15 @@ export async function introspectWorkspace(context?: { authToken?: string }): Pro
   }
 }
 
-export async function getWorkspaceMembers(context?: { authToken?: string }): Promise<McpResponse> {
+export async function getWorkspaceMembers(context?: {
+  authToken?: string;
+}): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest("/v2/workspace_members", {}, context?.authToken);
+    const response = await makeAttioRequest(
+      "/v2/workspace_members",
+      {},
+      context?.authToken,
+    );
     return createMcpResponse(
       response,
       `Workspace Members:\n\n${JSON.stringify(response, null, 2)}`,
@@ -68,9 +73,12 @@ export async function getWorkspaceMembers(context?: { authToken?: string }): Pro
   }
 }
 
-export async function getWorkspaceMember(args: {
-  workspace_member_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getWorkspaceMember(
+  args: {
+    workspace_member_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/workspace_members/${args.workspace_member_id}`,
@@ -86,7 +94,9 @@ export async function getWorkspaceMember(args: {
   }
 }
 
-export async function getSelf(context?: { authToken?: string }): Promise<McpResponse> {
+export async function getSelf(context?: {
+  authToken?: string;
+}): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest("/v2/self", {}, context?.authToken);
     return createMcpResponse(

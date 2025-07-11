@@ -5,17 +5,25 @@ import {
   createErrorResponse,
   McpResponse,
 } from "../base/api-client";
-
-// ===============================
-// NOTES SCHEMAS
-// ===============================
+import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
 
 export const listNotesSchema = {
   record_id: z
     .string()
     .optional()
     .describe("Optional: filter notes by record ID"),
-  limit: z.number().optional().describe("Maximum number of notes to return"),
+  limit: z
+    .number()
+    .min(1)
+    .max(GLOBAL_SEARCH_LIMIT)
+    .describe(
+      `Maximum number of notes to return (required, max: ${GLOBAL_SEARCH_LIMIT})`,
+    ),
+  offset: z
+    .number()
+    .min(0)
+    .optional()
+    .describe("Number of notes to skip for pagination"),
 };
 
 export const getNoteSchema = {
@@ -38,20 +46,26 @@ export const deleteNoteSchema = {
   note_id: z.string().describe("The ID of the note to delete"),
 };
 
-// ===============================
-// NOTES ACTIONS
-// ===============================
-
 export async function listNotes(
-  args: { record_id?: string; limit?: number } = {},
+  args: { record_id?: string; limit: number; offset?: number },
   context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
+    const pagination = validatePagination({
+      limit: args.limit,
+      offset: args.offset,
+    });
+
     const queryParams = new URLSearchParams();
     if (args.record_id) queryParams.append("record_id", args.record_id);
-    if (args.limit) queryParams.append("limit", args.limit.toString());
+    queryParams.append("limit", pagination.limit.toString());
+    queryParams.append("offset", pagination.offset.toString());
 
-    const response = await makeAttioRequest(`/v2/notes?${queryParams}`, {}, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/notes?${queryParams}`,
+      {},
+      context?.authToken,
+    );
     return createMcpResponse(
       response,
       `Notes:\n\n${JSON.stringify(response, null, 2)}`,
@@ -61,9 +75,16 @@ export async function listNotes(
   }
 }
 
-export async function getNote(args: { note_id: string }, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getNote(
+  args: { note_id: string },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/notes/${args.note_id}`, {}, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/notes/${args.note_id}`,
+      {},
+      context?.authToken,
+    );
     return createMcpResponse(
       response,
       `Note details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -73,26 +94,33 @@ export async function getNote(args: { note_id: string }, context?: { authToken?:
   }
 }
 
-export async function createNote(args: {
-  record_id: string;
-  content: string;
-  title?: string;
-  parent_object?: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createNote(
+  args: {
+    record_id: string;
+    content: string;
+    title?: string;
+    parent_object?: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const { record_id, content, title, parent_object = "people" } = args;
-    const response = await makeAttioRequest("/v2/notes", {
-      method: "POST",
-      body: JSON.stringify({
-        data: {
-          parent_object,
-          parent_record_id: record_id,
-          title: title || "Note",
-          format: "plaintext",
-          content,
-        },
-      }),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      "/v2/notes",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          data: {
+            parent_object,
+            parent_record_id: record_id,
+            title: title || "Note",
+            format: "plaintext",
+            content,
+          },
+        }),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -103,13 +131,20 @@ export async function createNote(args: {
   }
 }
 
-export async function deleteNote(args: {
-  note_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function deleteNote(
+  args: {
+    note_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    await makeAttioRequest(`/v2/notes/${args.note_id}`, {
-      method: "DELETE",
-    }, context?.authToken);
+    await makeAttioRequest(
+      `/v2/notes/${args.note_id}`,
+      {
+        method: "DELETE",
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(null, `Successfully deleted note ${args.note_id}`);
   } catch (error) {

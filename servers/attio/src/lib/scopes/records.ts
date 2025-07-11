@@ -5,10 +5,7 @@ import {
   createErrorResponse,
   McpResponse,
 } from "../base/api-client";
-
-// ===============================
-// RECORDS SCHEMAS
-// ===============================
+import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
 
 export const searchRecordsSchema = {
   object: z
@@ -20,15 +17,18 @@ export const searchRecordsSchema = {
     .object({
       limit: z
         .number()
-        .optional()
-        .describe("Maximum number of records to return (default: 25)"),
+        .min(1)
+        .max(GLOBAL_SEARCH_LIMIT)
+        .describe(
+          `Maximum number of records to return (required, max: ${GLOBAL_SEARCH_LIMIT})`,
+        ),
       offset: z
         .number()
+        .min(0)
         .optional()
         .describe("Number of records to skip for pagination"),
       sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
     })
-    .optional()
     .describe("Search criteria, filters, and sorting options"),
 };
 
@@ -108,23 +108,24 @@ export const getRecordEntriesSchema = {
   record_id: z.string().describe("The ID of the record"),
 };
 
-// ===============================
-// RECORDS ACTIONS
-// ===============================
-
-export async function searchRecords(args: {
-  object: string;
-  query?: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function searchRecords(
+  args: {
+    object: string;
+    query: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const { object, query = {} } = args;
+    const { object, query } = args;
+    const pagination = validatePagination(query);
+
     const response = await makeAttioRequest(
       `/v2/objects/${object}/records/query`,
       {
         method: "POST",
         body: JSON.stringify({
-          limit: query.limit || 25,
-          offset: query.offset || 0,
+          limit: pagination.limit,
+          offset: pagination.offset,
           sorts: query.sorts || [],
         }),
       },
@@ -140,10 +141,13 @@ export async function searchRecords(args: {
   }
 }
 
-export async function getRecord(args: {
-  object: string;
-  record_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getRecord(
+  args: {
+    object: string;
+    record_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}`,
@@ -159,10 +163,13 @@ export async function getRecord(args: {
   }
 }
 
-export async function createRecord(args: {
-  object: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createRecord(
+  args: {
+    object: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records`,
@@ -182,11 +189,14 @@ export async function createRecord(args: {
   }
 }
 
-export async function updateRecord(args: {
-  object: string;
-  record_id: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updateRecord(
+  args: {
+    object: string;
+    record_id: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}`,
@@ -206,11 +216,14 @@ export async function updateRecord(args: {
   }
 }
 
-export async function putUpdateRecord(args: {
-  object: string;
-  record_id: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function putUpdateRecord(
+  args: {
+    object: string;
+    record_id: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}`,
@@ -230,10 +243,13 @@ export async function putUpdateRecord(args: {
   }
 }
 
-export async function upsertRecord(args: {
-  object: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function upsertRecord(
+  args: {
+    object: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records`,
@@ -253,10 +269,13 @@ export async function upsertRecord(args: {
   }
 }
 
-export async function deleteRecord(args: {
-  object: string;
-  record_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function deleteRecord(
+  args: {
+    object: string;
+    record_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}`,
@@ -275,12 +294,15 @@ export async function deleteRecord(args: {
   }
 }
 
-export async function getRecordAttributeValues(args: {
-  object: string;
-  record_id: string;
-  attribute: string;
-  show_historic?: boolean;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getRecordAttributeValues(
+  args: {
+    object: string;
+    record_id: string;
+    attribute: string;
+    show_historic?: boolean;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const queryParams = new URLSearchParams();
     if (args.show_historic) queryParams.append("show_historic", "true");
@@ -299,10 +321,13 @@ export async function getRecordAttributeValues(args: {
   }
 }
 
-export async function getRecordEntries(args: {
-  object: string;
-  record_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getRecordEntries(
+  args: {
+    object: string;
+    record_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/records/${args.record_id}/entries`,

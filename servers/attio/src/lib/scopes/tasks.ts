@@ -5,10 +5,7 @@ import {
   createErrorResponse,
   McpResponse,
 } from "../base/api-client";
-
-// ===============================
-// TASKS SCHEMAS
-// ===============================
+import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
 
 export const listTasksSchema = {
   assignee_id: z
@@ -19,7 +16,18 @@ export const listTasksSchema = {
     .boolean()
     .optional()
     .describe("Optional: filter by completion status"),
-  limit: z.number().optional().describe("Maximum number of tasks to return"),
+  limit: z
+    .number()
+    .min(1)
+    .max(GLOBAL_SEARCH_LIMIT)
+    .describe(
+      `Maximum number of tasks to return (required, max: ${GLOBAL_SEARCH_LIMIT})`,
+    ),
+  offset: z
+    .number()
+    .min(0)
+    .optional()
+    .describe("Number of tasks to skip for pagination"),
 };
 
 export const getTaskSchema = {
@@ -60,26 +68,33 @@ export const deleteTaskSchema = {
   task_id: z.string().describe("The ID of the task to delete"),
 };
 
-// ===============================
-// TASKS ACTIONS
-// ===============================
-
 export async function listTasks(
   args: {
     assignee_id?: string;
     is_completed?: boolean;
-    limit?: number;
-  } = {},
+    limit: number;
+    offset?: number;
+  },
   context?: { authToken?: string },
 ): Promise<McpResponse> {
   try {
+    const pagination = validatePagination({
+      limit: args.limit,
+      offset: args.offset,
+    });
+
     const queryParams = new URLSearchParams();
     if (args.assignee_id) queryParams.append("assignee_id", args.assignee_id);
     if (args.is_completed !== undefined)
       queryParams.append("is_completed", args.is_completed.toString());
-    if (args.limit) queryParams.append("limit", args.limit.toString());
+    queryParams.append("limit", pagination.limit.toString());
+    queryParams.append("offset", pagination.offset.toString());
 
-    const response = await makeAttioRequest(`/v2/tasks?${queryParams}`, {}, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/tasks?${queryParams}`,
+      {},
+      context?.authToken,
+    );
     return createMcpResponse(
       response,
       `Tasks:\n\n${JSON.stringify(response, null, 2)}`,
@@ -89,9 +104,16 @@ export async function listTasks(
   }
 }
 
-export async function getTask(args: { task_id: string }, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getTask(
+  args: { task_id: string },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/tasks/${args.task_id}`, {}, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/tasks/${args.task_id}`,
+      {},
+      context?.authToken,
+    );
     return createMcpResponse(
       response,
       `Task details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -101,12 +123,15 @@ export async function getTask(args: { task_id: string }, context?: { authToken?:
   }
 }
 
-export async function createTask(args: {
-  content: string;
-  assignee_id?: string;
-  deadline_at?: string;
-  linked_records?: string[];
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createTask(
+  args: {
+    content: string;
+    assignee_id?: string;
+    deadline_at?: string;
+    linked_records?: string[];
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const { content, assignee_id, deadline_at, linked_records = [] } = args;
     const assignees = assignee_id
@@ -118,22 +143,26 @@ export async function createTask(args: {
         ]
       : [];
 
-    const response = await makeAttioRequest("/v2/tasks", {
-      method: "POST",
-      body: JSON.stringify({
-        data: {
-          format: "plaintext",
-          content,
-          deadline_at: deadline_at || null,
-          is_completed: false,
-          linked_records: linked_records.map((recordId: string) => ({
-            target_object: "people",
-            target_record_id: recordId,
-          })),
-          assignees,
-        },
-      }),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      "/v2/tasks",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          data: {
+            format: "plaintext",
+            content,
+            deadline_at: deadline_at || null,
+            is_completed: false,
+            linked_records: linked_records.map((recordId: string) => ({
+              target_object: "people",
+              target_record_id: recordId,
+            })),
+            assignees,
+          },
+        }),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -144,19 +173,26 @@ export async function createTask(args: {
   }
 }
 
-export async function updateTask(args: {
-  task_id: string;
-  is_completed?: boolean;
-  deadline_at?: string;
-  assignees?: any[];
-  linked_records?: any[];
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updateTask(
+  args: {
+    task_id: string;
+    is_completed?: boolean;
+    deadline_at?: string;
+    assignees?: any[];
+    linked_records?: any[];
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const { task_id, ...updateData } = args;
-    const response = await makeAttioRequest(`/v2/tasks/${task_id}`, {
-      method: "PATCH",
-      body: JSON.stringify(updateData),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/tasks/${task_id}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(updateData),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -167,13 +203,20 @@ export async function updateTask(args: {
   }
 }
 
-export async function deleteTask(args: {
-  task_id: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function deleteTask(
+  args: {
+    task_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    await makeAttioRequest(`/v2/tasks/${args.task_id}`, {
-      method: "DELETE",
-    }, context?.authToken);
+    await makeAttioRequest(
+      `/v2/tasks/${args.task_id}`,
+      {
+        method: "DELETE",
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(null, `Successfully deleted task ${args.task_id}`);
   } catch (error) {
