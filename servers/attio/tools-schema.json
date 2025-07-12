@@ -2462,6 +2462,8 @@
                       "description": "Event type for the subscription"
                     },
                     "filter": {
+                      "type": "object",
+                      "additionalProperties": {},
                       "description": "Optional filter for the subscription"
                     }
                   },
@@ -2524,6 +2526,8 @@
                       "description": "Event type for the subscription"
                     },
                     "filter": {
+                      "type": "object",
+                      "additionalProperties": {},
                       "description": "Optional filter for the subscription"
                     }
                   },
