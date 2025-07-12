@@ -6,7 +6,7 @@ on:
     paths:
       - "servers/attio/src/lib/scopes/**"
       - "servers/attio/scripts/extract-tools-schema.ts"
-      - ".github/actions/workflows/update-schema.yml"
+      - ".github/workflows/update-schema.yml"
   workflow_dispatch:
 
 jobs:
