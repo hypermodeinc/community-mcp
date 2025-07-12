@@ -129,7 +129,7 @@ export const createWebhookSchema = {
           z.object({
             event_type: z.string().describe("Event type for the subscription"),
             filter: z
-              .unknown()
+              .record(z.unknown())
               .optional()
               .describe("Optional filter for the subscription"),
           }),
@@ -153,7 +153,7 @@ export const updateWebhookSchema = {
           z.object({
             event_type: z.string().describe("Event type for the subscription"),
             filter: z
-              .unknown()
+              .record(z.unknown())
               .optional()
               .describe("Optional filter for the subscription"),
           }),
