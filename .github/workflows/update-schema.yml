@@ -69,6 +69,7 @@ jobs:
 
   update-hypermode-repo:
     needs: update-schema
+    # Always run this job to ensure sync, regardless of local changes
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -82,10 +83,18 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: community-mcp
 
+      - name: Debug repository access
+        run: |
+          echo "Checking if hypermode repository exists and is accessible..."
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/hypermodeinc/hypermode || echo "Repository not accessible"
+
       - name: Checkout hypermode repo
         uses: actions/checkout@v4
         with:
           repository: hypermodeinc/hypermode
+          ref: main # explicitly specify the branch
           token: ${{ secrets.GITHUB_TOKEN }}
           path: hypermode
 
