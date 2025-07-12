@@ -6,6 +6,7 @@ on:
     paths:
       - "servers/attio/src/lib/scopes/**"
       - "servers/attio/scripts/extract-tools-schema.ts"
+      - ".github/actions/workflows/update-schema.yml"
   workflow_dispatch:
 
 jobs:
@@ -29,10 +30,12 @@ jobs:
           cd servers/attio
           pnpm generate:schema
 
-      - name: Format generated schema with Trunk
+      - name: Install trunk locally
         uses: trunk-io/trunk-action@v1
-        with:
-          arguments: "fmt servers/attio/tools-schema.json"
+
+      - name: Format generated schema with trunk
+        run: |
+          $TRUNK_PATH fmt servers/attio/tools-schema.json
 
       - name: Check for changes
         id: check_changes
