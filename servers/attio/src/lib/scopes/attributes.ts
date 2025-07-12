@@ -31,7 +31,10 @@ export const createAttributeSchema = {
         .boolean()
         .optional()
         .describe("Whether the attribute allows multiple values"),
-      config: z.record(z.any()).optional().describe("Additional configuration"),
+      config: z
+        .record(z.unknown())
+        .optional()
+        .describe("Additional configuration"),
     })
     .describe("Attribute data"),
 };
@@ -53,7 +56,10 @@ export const updateAttributeSchema = {
         .boolean()
         .optional()
         .describe("Whether the attribute is required"),
-      config: z.record(z.any()).optional().describe("Additional configuration"),
+      config: z
+        .record(z.unknown())
+        .optional()
+        .describe("Additional configuration"),
     })
     .describe("Attribute data to update"),
 };
@@ -126,10 +132,13 @@ export const updateStatusSchema = {
 // ATTRIBUTES ACTIONS
 // ===============================
 
-export async function listAttributes(args: {
-  target: string;
-  identifier: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function listAttributes(
+  args: {
+    target: string;
+    identifier: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes`,
@@ -145,11 +154,14 @@ export async function listAttributes(args: {
   }
 }
 
-export async function createAttribute(args: {
-  target: string;
-  identifier: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createAttribute(
+  args: {
+    target: string;
+    identifier: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes`,
@@ -169,11 +181,14 @@ export async function createAttribute(args: {
   }
 }
 
-export async function getAttribute(args: {
-  target: string;
-  identifier: string;
-  attribute: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getAttribute(
+  args: {
+    target: string;
+    identifier: string;
+    attribute: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}`,
@@ -189,12 +204,15 @@ export async function getAttribute(args: {
   }
 }
 
-export async function updateAttribute(args: {
-  target: string;
-  identifier: string;
-  attribute: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updateAttribute(
+  args: {
+    target: string;
+    identifier: string;
+    attribute: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}`,
@@ -215,11 +233,14 @@ export async function updateAttribute(args: {
 }
 
 // Select Options Actions
-export async function listSelectOptions(args: {
-  target: string;
-  identifier: string;
-  attribute: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function listSelectOptions(
+  args: {
+    target: string;
+    identifier: string;
+    attribute: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/options`,
@@ -235,12 +256,15 @@ export async function listSelectOptions(args: {
   }
 }
 
-export async function createSelectOption(args: {
-  target: string;
-  identifier: string;
-  attribute: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createSelectOption(
+  args: {
+    target: string;
+    identifier: string;
+    attribute: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/options`,
@@ -260,13 +284,16 @@ export async function createSelectOption(args: {
   }
 }
 
-export async function updateSelectOption(args: {
-  target: string;
-  identifier: string;
-  attribute: string;
-  option: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updateSelectOption(
+  args: {
+    target: string;
+    identifier: string;
+    attribute: string;
+    option: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/options/${args.option}`,
@@ -287,11 +314,14 @@ export async function updateSelectOption(args: {
 }
 
 // Status Actions
-export async function listStatuses(args: {
-  target: string;
-  identifier: string;
-  attribute: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function listStatuses(
+  args: {
+    target: string;
+    identifier: string;
+    attribute: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/statuses`,
@@ -307,12 +337,15 @@ export async function listStatuses(args: {
   }
 }
 
-export async function createStatus(args: {
-  target: string;
-  identifier: string;
-  attribute: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createStatus(
+  args: {
+    target: string;
+    identifier: string;
+    attribute: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/statuses`,
@@ -332,13 +365,16 @@ export async function createStatus(args: {
   }
 }
 
-export async function updateStatus(args: {
-  target: string;
-  identifier: string;
-  attribute: string;
-  status: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updateStatus(
+  args: {
+    target: string;
+    identifier: string;
+    attribute: string;
+    status: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/${args.target}/${args.identifier}/attributes/${args.attribute}/statuses/${args.status}`,

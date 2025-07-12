@@ -6,11 +6,12 @@ import {
   McpResponse,
 } from "../base/api-client";
 import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
+import { SortSchema } from "../types";
 
 export const searchDealsSchema = {
   query: z
     .object({
-      sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
+      sorts: z.array(SortSchema).optional().describe("Array of sort criteria"),
       limit: z
         .number()
         .min(1)
@@ -35,7 +36,7 @@ export const createDealSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe(
           "Key-value pairs of attributes for the new deal. Standard attributes include: name (string), stage (string), owner (string/email), value (number), associated_people (array), associated_company (object)",
         ),
@@ -48,7 +49,7 @@ export const updateDealSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe("Key-value pairs of attributes to update"),
     })
     .describe("The deal data to update"),
@@ -58,7 +59,7 @@ export const assertDealSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe("Key-value pairs of attributes for the deal"),
       matching_attribute: z
         .string()

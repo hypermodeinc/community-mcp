@@ -6,10 +6,7 @@ import {
   McpResponse,
 } from "../base/api-client";
 import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
-
-// ===============================
-// LISTS SCHEMAS
-// ===============================
+import { SortSchema } from "../types";
 
 export const listListsSchema = {};
 
@@ -23,7 +20,14 @@ export const createListSchema = {
         .optional()
         .describe("Workspace access level"),
       workspace_member_access: z
-        .array(z.any())
+        .array(
+          z.object({
+            workspace_member_id: z.string().describe("Workspace member ID"),
+            level: z
+              .string()
+              .describe("Access level (e.g., 'read', 'write', 'admin')"),
+          }),
+        )
         .optional()
         .describe("Workspace member access"),
     })
@@ -44,7 +48,14 @@ export const updateListSchema = {
         .optional()
         .describe("Workspace access level"),
       workspace_member_access: z
-        .array(z.any())
+        .array(
+          z.object({
+            workspace_member_id: z.string().describe("Workspace member ID"),
+            level: z
+              .string()
+              .describe("Access level (e.g., 'read', 'write', 'admin')"),
+          }),
+        )
         .optional()
         .describe("Workspace member access"),
     })
@@ -68,7 +79,7 @@ export const searchListEntriesSchema = {
         .min(0)
         .optional()
         .describe("Number of entries to skip"),
-      sorts: z.array(z.any()).optional().describe("Sort criteria"),
+      sorts: z.array(SortSchema).optional().describe("Sort criteria"),
     })
     .optional()
     .describe("Search criteria and filters"),
@@ -82,7 +93,7 @@ export const addToListSchema = {
         .string()
         .describe("ID of the parent record to add to the list"),
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .optional()
         .describe("Additional attribute values for the list entry"),
     })
@@ -95,7 +106,7 @@ export const upsertListEntrySchema = {
     .object({
       parent_record: z.string().describe("ID of the parent record"),
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .optional()
         .describe("Attribute values for the list entry"),
     })
@@ -117,7 +128,7 @@ export const updateListEntrySchema = {
   entry_id: z.string().describe("ID of the entry to update"),
   data: z
     .object({
-      values: z.record(z.any()).describe("Attribute values to update"),
+      values: z.record(z.unknown()).describe("Attribute values to update"),
     })
     .describe("Updated entry data"),
 };
@@ -127,7 +138,7 @@ export const putUpdateListEntrySchema = {
   entry_id: z.string().describe("ID of the entry to update"),
   data: z
     .object({
-      values: z.record(z.any()).describe("Attribute values to overwrite"),
+      values: z.record(z.unknown()).describe("Attribute values to overwrite"),
     })
     .describe("Entry data to overwrite"),
 };
@@ -138,10 +149,6 @@ export const getListEntryAttributeValuesSchema = {
   attribute: z.string().describe("The attribute ID or slug"),
   show_historic: z.boolean().optional().describe("Include historic values"),
 };
-
-// ===============================
-// LISTS ACTIONS
-// ===============================
 
 export async function listLists(context?: {
   authToken?: string;

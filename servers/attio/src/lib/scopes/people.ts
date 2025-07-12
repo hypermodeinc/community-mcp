@@ -6,6 +6,7 @@ import {
   McpResponse,
 } from "../base/api-client";
 import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
+import { SortSchema } from "../types";
 
 export const searchPeopleSchema = {
   query: z
@@ -22,7 +23,7 @@ export const searchPeopleSchema = {
         .min(0)
         .optional()
         .describe("Number of people to skip for pagination"),
-      sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
+      sorts: z.array(SortSchema).optional().describe("Array of sort criteria"),
     })
     .describe("Search criteria, filters, and sorting options"),
 };
@@ -35,7 +36,7 @@ export const createPersonSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe(
           "Key-value pairs of attributes for the new person (e.g., first_name, last_name, email)",
         ),
@@ -48,7 +49,7 @@ export const updatePersonSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe("Key-value pairs of attributes to update"),
     })
     .describe("The person data to update"),
