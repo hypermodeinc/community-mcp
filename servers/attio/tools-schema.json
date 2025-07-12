@@ -630,6 +630,29 @@
               },
               "sorts": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ]
+                    },
+                    "field": {
+                      "type": "string"
+                    },
+                    "attribute": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "direction",
+                    "field"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Array of sort criteria"
               }
             },
@@ -921,6 +944,29 @@
               },
               "sorts": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ]
+                    },
+                    "field": {
+                      "type": "string"
+                    },
+                    "attribute": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "direction",
+                    "field"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Array of sort criteria"
               }
             },
@@ -1061,21 +1107,18 @@
                       "enum": [
                         "asc",
                         "desc"
-                      ],
-                      "description": "Sort direction"
-                    },
-                    "attribute": {
-                      "type": "string",
-                      "description": "Attribute to sort by"
+                      ]
                     },
                     "field": {
-                      "type": "string",
-                      "description": "Specific field for complex attributes like domains"
+                      "type": "string"
+                    },
+                    "attribute": {
+                      "type": "string"
                     }
                   },
                   "required": [
                     "direction",
-                    "attribute"
+                    "field"
                   ],
                   "additionalProperties": false
                 },
@@ -1324,6 +1367,29 @@
             "properties": {
               "sorts": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ]
+                    },
+                    "field": {
+                      "type": "string"
+                    },
+                    "attribute": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "direction",
+                    "field"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Array of sort criteria"
               },
               "limit": {
@@ -1577,6 +1643,24 @@
               },
               "workspace_member_access": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "workspace_member_id": {
+                      "type": "string",
+                      "description": "Workspace member ID"
+                    },
+                    "level": {
+                      "type": "string",
+                      "description": "Access level (e.g., 'read', 'write', 'admin')"
+                    }
+                  },
+                  "required": [
+                    "workspace_member_id",
+                    "level"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Workspace member access"
               }
             },
@@ -1636,6 +1720,24 @@
               },
               "workspace_member_access": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "workspace_member_id": {
+                      "type": "string",
+                      "description": "Workspace member ID"
+                    },
+                    "level": {
+                      "type": "string",
+                      "description": "Access level (e.g., 'read', 'write', 'admin')"
+                    }
+                  },
+                  "required": [
+                    "workspace_member_id",
+                    "level"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Workspace member access"
               }
             },
@@ -1677,6 +1779,29 @@
               },
               "sorts": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ]
+                    },
+                    "field": {
+                      "type": "string"
+                    },
+                    "attribute": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "direction",
+                    "field"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Sort criteria"
               }
             },
@@ -2123,10 +2248,46 @@
           },
           "assignees": {
             "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "referenced_actor_type": {
+                  "type": "string",
+                  "description": "Type of actor (e.g., 'workspace-member')"
+                },
+                "referenced_actor_id": {
+                  "type": "string",
+                  "description": "ID of the actor to assign"
+                }
+              },
+              "required": [
+                "referenced_actor_type",
+                "referenced_actor_id"
+              ],
+              "additionalProperties": false
+            },
             "description": "Update task assignees"
           },
           "linked_records": {
             "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "target_object": {
+                  "type": "string",
+                  "description": "Type of linked record (e.g., 'people')"
+                },
+                "target_record_id": {
+                  "type": "string",
+                  "description": "ID of the linked record"
+                }
+              },
+              "required": [
+                "target_object",
+                "target_record_id"
+              ],
+              "additionalProperties": false
+            },
             "description": "Update linked records"
           }
         },
@@ -2294,6 +2455,29 @@
               },
               "sorts": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ]
+                    },
+                    "field": {
+                      "type": "string"
+                    },
+                    "attribute": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "direction",
+                    "field"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Array of sort criteria"
               }
             },
@@ -2432,6 +2616,29 @@
               },
               "sorts": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ]
+                    },
+                    "field": {
+                      "type": "string"
+                    },
+                    "attribute": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "direction",
+                    "field"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Array of sort criteria"
               }
             },
@@ -2590,6 +2797,22 @@
               },
               "subscriptions": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "event_type": {
+                      "type": "string",
+                      "description": "Event type for the subscription"
+                    },
+                    "filter": {
+                      "description": "Optional filter for the subscription"
+                    }
+                  },
+                  "required": [
+                    "event_type"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Webhook subscriptions"
               }
             },
@@ -2645,6 +2868,22 @@
               },
               "subscriptions": {
                 "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "event_type": {
+                      "type": "string",
+                      "description": "Event type for the subscription"
+                    },
+                    "filter": {
+                      "description": "Optional filter for the subscription"
+                    }
+                  },
+                  "required": [
+                    "event_type"
+                  ],
+                  "additionalProperties": false
+                },
                 "description": "Webhook subscriptions"
               }
             },
