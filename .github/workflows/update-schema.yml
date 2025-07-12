@@ -55,7 +55,7 @@ jobs:
             echo "changes=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and push changes
+      - name: Commit and push changes to community-mcp
         if: steps.check_changes.outputs.changes == 'true'
         run: |
           git config --local user.email "action@github.com"
@@ -63,3 +63,68 @@ jobs:
           git add servers/attio/tools-schema.json
           git commit -m "chore: update tools schema [skip ci]"
           git push
+
+    outputs:
+      changes: ${{ steps.check_changes.outputs.changes }}
+
+  update-hypermode-repo:
+    needs: update-schema
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout community-mcp repo
+        uses: actions/checkout@v4
+        with:
+          repository: hypermodeinc/community-mcp
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: community-mcp
+
+      - name: Checkout hypermode repo
+        uses: actions/checkout@v4
+        with:
+          repository: hypermodeinc/hypermode
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: hypermode
+
+      - name: Copy schema file and check for differences
+        id: sync_check
+        run: |
+          # Copy the schema file
+          cp community-mcp/servers/attio/tools-schema.json hypermode/seeds/attio_tools.json
+
+          # Check if there are any differences in the hypermode repo
+          cd hypermode
+          if git diff --quiet seeds/attio_tools.json; then
+            echo "sync_needed=false" >> $GITHUB_OUTPUT
+            echo "No changes needed - files are in sync"
+          else
+            echo "sync_needed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected - sync needed"
+            git diff seeds/attio_tools.json
+          fi
+
+      - name: Create Pull Request in hypermode repo
+        if: steps.sync_check.outputs.sync_needed == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: hypermode
+          commit-message: "chore: update Attio tools schema from community-mcp"
+          title: "Update Attio tools schema"
+          body: |
+            This PR updates the Attio tools schema in `seeds/attio_tools.json` with the latest version from the community-mcp repository.
+
+            **Changes:**
+            - Updated `seeds/attio_tools.json` with latest schema from `hypermodeinc/community-mcp`
+
+            **Source:**
+            - Generated from: `hypermodeinc/community-mcp/servers/attio/tools-schema.json`
+            - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            This PR was automatically created by the schema update workflow.
+          branch: update-attio-schema
+          delete-branch: true
+          draft: false
