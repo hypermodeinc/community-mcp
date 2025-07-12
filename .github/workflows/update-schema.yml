@@ -9,6 +9,9 @@ on:
       - ".github/workflows/update-schema.yml"
   workflow_dispatch:
 
+env:
+  GITHUB_TOKEN: ${{ secrets.CROSS_REPO_PAT }}
+
 jobs:
   update-schema:
     runs-on: ubuntu-latest
@@ -19,7 +22,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ env.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup project
@@ -80,22 +83,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: hypermodeinc/community-mcp
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ env.GITHUB_TOKEN }}
           path: community-mcp
-
-      - name: Debug repository access
-        run: |
-          echo "Checking if hypermode repository exists and is accessible..."
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-               -H "Accept: application/vnd.github.v3+json" \
-               https://api.github.com/repos/hypermodeinc/hypermode || echo "Repository not accessible"
 
       - name: Checkout hypermode repo
         uses: actions/checkout@v4
         with:
           repository: hypermodeinc/hypermode
           ref: main # explicitly specify the branch
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ env.GITHUB_TOKEN }}
           path: hypermode
 
       - name: Copy schema file and check for differences
@@ -119,7 +115,7 @@ jobs:
         if: steps.sync_check.outputs.sync_needed == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ env.GITHUB_TOKEN }}
           path: hypermode
           commit-message: "chore: update Attio tools schema from community-mcp"
           title: "Update Attio tools schema"
