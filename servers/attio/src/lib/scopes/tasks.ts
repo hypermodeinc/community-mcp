@@ -60,8 +60,28 @@ export const updateTaskSchema = {
     .string()
     .optional()
     .describe("Update task deadline (ISO 8601 format)"),
-  assignees: z.array(z.any()).optional().describe("Update task assignees"),
-  linked_records: z.array(z.any()).optional().describe("Update linked records"),
+  assignees: z
+    .array(
+      z.object({
+        referenced_actor_type: z
+          .string()
+          .describe("Type of actor (e.g., 'workspace-member')"),
+        referenced_actor_id: z.string().describe("ID of the actor to assign"),
+      }),
+    )
+    .optional()
+    .describe("Update task assignees"),
+  linked_records: z
+    .array(
+      z.object({
+        target_object: z
+          .string()
+          .describe("Type of linked record (e.g., 'people')"),
+        target_record_id: z.string().describe("ID of the linked record"),
+      }),
+    )
+    .optional()
+    .describe("Update linked records"),
 };
 
 export const deleteTaskSchema = {

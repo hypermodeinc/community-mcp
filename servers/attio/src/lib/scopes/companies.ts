@@ -6,6 +6,7 @@ import {
   McpResponse,
 } from "../base/api-client";
 import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
+import { SortSchema } from "../types";
 
 // ===============================
 // COMPANIES SCHEMAS
@@ -15,22 +16,13 @@ export const searchCompaniesSchema = {
   query: z
     .object({
       filter: z
-        .record(z.any())
+        .record(z.unknown())
         .optional()
         .describe(
           "Filter object to subset records. Supports complex filtering with $and, $or operators",
         ),
       sorts: z
-        .array(
-          z.object({
-            direction: z.enum(["asc", "desc"]).describe("Sort direction"),
-            attribute: z.string().describe("Attribute to sort by"),
-            field: z
-              .string()
-              .optional()
-              .describe("Specific field for complex attributes like domains"),
-          }),
-        )
+        .array(SortSchema)
         .optional()
         .describe("Array of sort criteria with direction and attribute"),
       limit: z
@@ -60,7 +52,7 @@ export const createCompanySchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe(
           "Key-value pairs of attributes for the new company. Standard attributes include: domains (array), name (string), description (string), team (array of emails), primary_location (string), categories (array), foundation_date (string), employee_range (string), etc.",
         ),
@@ -76,7 +68,7 @@ export const updateCompanySchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe(
           "Key-value pairs of attributes to update. For multiselect attributes, values will be appended to existing values.",
         ),
@@ -88,7 +80,7 @@ export const assertCompanySchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe("Key-value pairs of attributes for the company"),
     })
     .describe("The company data to create or update"),

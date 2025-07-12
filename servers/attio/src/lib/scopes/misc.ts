@@ -6,6 +6,7 @@ import {
   McpResponse,
 } from "../base/api-client";
 import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
+import { SortSchema } from "../types";
 
 export const searchUsersSchema = {
   query: z
@@ -22,7 +23,7 @@ export const searchUsersSchema = {
         .min(0)
         .optional()
         .describe("Number of users to skip for pagination"),
-      sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
+      sorts: z.array(SortSchema).optional().describe("Array of sort criteria"),
     })
     .describe("Search criteria, filters, and sorting options"),
 };
@@ -35,7 +36,7 @@ export const createUserSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe("Key-value pairs of attributes for the new user"),
     })
     .describe("The user data to create"),
@@ -46,7 +47,7 @@ export const updateUserSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe("Key-value pairs of attributes to update"),
     })
     .describe("The user data to update"),
@@ -71,7 +72,7 @@ export const searchWorkspacesSchema = {
         .min(0)
         .optional()
         .describe("Number of workspaces to skip for pagination"),
-      sorts: z.array(z.any()).optional().describe("Array of sort criteria"),
+      sorts: z.array(SortSchema).optional().describe("Array of sort criteria"),
     })
     .describe("Search criteria, filters, and sorting options"),
 };
@@ -84,7 +85,7 @@ export const createWorkspaceSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe("Key-value pairs of attributes for the new workspace"),
     })
     .describe("The workspace data to create"),
@@ -95,7 +96,7 @@ export const updateWorkspaceSchema = {
   data: z
     .object({
       values: z
-        .record(z.any())
+        .record(z.unknown())
         .describe("Key-value pairs of attributes to update"),
     })
     .describe("The workspace data to update"),
@@ -123,7 +124,17 @@ export const createWebhookSchema = {
   data: z
     .object({
       url: z.string().describe("Webhook URL"),
-      subscriptions: z.array(z.any()).describe("Webhook subscriptions"),
+      subscriptions: z
+        .array(
+          z.object({
+            event_type: z.string().describe("Event type for the subscription"),
+            filter: z
+              .unknown()
+              .optional()
+              .describe("Optional filter for the subscription"),
+          }),
+        )
+        .describe("Webhook subscriptions"),
     })
     .describe("Webhook data to create"),
 };
@@ -138,7 +149,15 @@ export const updateWebhookSchema = {
     .object({
       url: z.string().optional().describe("Webhook URL"),
       subscriptions: z
-        .array(z.any())
+        .array(
+          z.object({
+            event_type: z.string().describe("Event type for the subscription"),
+            filter: z
+              .unknown()
+              .optional()
+              .describe("Optional filter for the subscription"),
+          }),
+        )
         .optional()
         .describe("Webhook subscriptions"),
     })
