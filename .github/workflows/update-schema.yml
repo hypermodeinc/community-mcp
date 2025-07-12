@@ -36,6 +36,12 @@ jobs:
           chmod +x /tmp/trunk
           echo "TRUNK_PATH=/tmp/trunk" >> $GITHUB_ENV
 
+      - name: Initialize trunk in repository (if needed)
+        run: |
+          if [ ! -f .trunk/trunk.yaml ]; then
+            $TRUNK_PATH init --ci
+          fi
+
       - name: Format generated schema with trunk
         run: |
           $TRUNK_PATH fmt servers/attio/tools-schema.json || true
