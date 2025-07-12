@@ -30,12 +30,15 @@ jobs:
           cd servers/attio
           pnpm generate:schema
 
-      - name: Install trunk locally
-        uses: trunk-io/trunk-action@v1
+      - name: Download and install trunk manually
+        run: |
+          curl -fsSL https://trunk.io/releases/trunk -o /tmp/trunk
+          chmod +x /tmp/trunk
+          echo "TRUNK_PATH=/tmp/trunk" >> $GITHUB_ENV
 
       - name: Format generated schema with trunk
         run: |
-          trunk fmt servers/attio/tools-schema.json
+          $TRUNK_PATH fmt servers/attio/tools-schema.json || true
 
       - name: Check for changes
         id: check_changes
