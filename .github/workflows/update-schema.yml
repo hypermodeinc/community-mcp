@@ -35,7 +35,7 @@ jobs:
 
       - name: Format generated schema with trunk
         run: |
-          $TRUNK_PATH fmt servers/attio/tools-schema.json
+          trunk fmt servers/attio/tools-schema.json
 
       - name: Check for changes
         id: check_changes
