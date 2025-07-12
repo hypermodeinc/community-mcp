@@ -22,7 +22,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup project
@@ -72,7 +72,6 @@ jobs:
 
   update-hypermode-repo:
     needs: update-schema
-    # Always run this job to ensure sync, regardless of local changes
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -83,24 +82,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: hypermodeinc/community-mcp
-          token: ${{ env.PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           path: community-mcp
 
       - name: Checkout hypermode repo
         uses: actions/checkout@v4
         with:
           repository: hypermodeinc/hypermode
-          ref: main # explicitly specify the branch
+          ref: main
           token: ${{ env.PAT_TOKEN }}
           path: hypermode
 
       - name: Copy schema file and check for differences
         id: sync_check
         run: |
-          # Copy the schema file
           cp community-mcp/servers/attio/tools-schema.json hypermode/seeds/attio_tools.json
-
-          # Check if there are any differences in the hypermode repo
           cd hypermode
           if git diff --quiet seeds/attio_tools.json; then
             echo "sync_needed=false" >> $GITHUB_OUTPUT
@@ -113,23 +109,52 @@ jobs:
 
       - name: Create Pull Request in hypermode repo
         if: steps.sync_check.outputs.sync_needed == 'true'
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ env.PAT_TOKEN }}
-          path: hypermode
-          commit-message: "chore: update Attio tools schema from community-mcp"
-          title: "Update Attio tools schema"
-          body: |
-            This PR updates the Attio tools schema in `seeds/attio_tools.json` with the latest version from the community-mcp repository.
+        run: |
+          cd hypermode
 
-            **Changes:**
-            - Updated `seeds/attio_tools.json` with latest schema from `hypermodeinc/community-mcp`
+          # Configure git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
 
-            **Source:**
-            - Generated from: `hypermodeinc/community-mcp/servers/attio/tools-schema.json`
-            - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          # Create and switch to new branch
+          git checkout -b update-attio-schema
 
-            This PR was automatically created by the schema update workflow.
-          branch: update-attio-schema
-          delete-branch: true
-          draft: false
+          # Add and commit changes
+          git add seeds/attio_tools.json
+          git commit -m "chore: update Attio tools schema from community-mcp"
+
+          # Push the branch
+          git push origin update-attio-schema
+
+          # Create PR using GitHub CLI
+          gh pr create \
+            --title "Update Attio tools schema" \
+            --body "🤖 **Automated PR**: This PR updates the Attio tools schema in \`seeds/attio_tools.json\` with the latest version from the community-mcp repository.
+
+          ## ⚠️ Important: Manual Steps Required Before Merging
+
+          **You must run database migrations before merging this PR:**
+
+          \`\`\`bash
+          # Run the migrations to update the database schema
+          pnpm run migrate
+          # or whatever your migration command is
+          \`\`\`
+
+          The schema changes may include new tables, columns, or other database structure updates that require migration execution.
+
+          ## Changes
+          - 📝 Updated \`seeds/attio_tools.json\` with latest schema from community-mcp
+
+          ## Source Information
+          - 🔗 Generated from: \`hypermodeinc/community-mcp/servers/attio/tools-schema.json\`
+          - 🚀 Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          - 📅 Generated at: ${{ github.event.head_commit.timestamp }}
+
+          ---
+
+          ⚡ This PR was automatically created by the schema update workflow. Please review the changes and run migrations before merging." \
+            --head update-attio-schema \
+            --base main
+        env:
+          GH_TOKEN: ${{ env.PAT_TOKEN }}
