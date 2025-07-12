@@ -46,9 +46,7 @@
             "description": "The ID of the workspace member to retrieve"
           }
         },
-        "required": [
-          "workspace_member_id"
-        ]
+        "required": ["workspace_member_id"]
       }
     },
     {
@@ -82,9 +80,7 @@
             "description": "Object ID or slug (e.g., 'people', 'companies', 'opportunities')"
           }
         },
-        "required": [
-          "object"
-        ]
+        "required": ["object"]
       }
     },
     {
@@ -119,18 +115,12 @@
                 "description": "Whether the object is enabled"
               }
             },
-            "required": [
-              "api_slug",
-              "singular_noun",
-              "plural_noun"
-            ],
+            "required": ["api_slug", "singular_noun", "plural_noun"],
             "additionalProperties": false,
             "description": "Object data to create"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -169,10 +159,7 @@
             "description": "Object data to update"
           }
         },
-        "required": [
-          "object",
-          "data"
-        ]
+        "required": ["object", "data"]
       }
     },
     {
@@ -188,9 +175,7 @@
             "description": "Object ID or slug"
           }
         },
-        "required": [
-          "object"
-        ]
+        "required": ["object"]
       }
     },
     {
@@ -210,10 +195,7 @@
             "description": "Object or list identifier"
           }
         },
-        "required": [
-          "target",
-          "identifier"
-        ]
+        "required": ["target", "identifier"]
       }
     },
     {
@@ -261,20 +243,12 @@
                 "description": "Additional configuration"
               }
             },
-            "required": [
-              "title",
-              "api_slug",
-              "type"
-            ],
+            "required": ["title", "api_slug", "type"],
             "additionalProperties": false,
             "description": "Attribute data"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "data"
-        ]
+        "required": ["target", "identifier", "data"]
       }
     },
     {
@@ -298,11 +272,7 @@
             "description": "Attribute ID or slug"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "attribute"
-        ]
+        "required": ["target", "identifier", "attribute"]
       }
     },
     {
@@ -346,12 +316,7 @@
             "description": "Attribute data to update"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "attribute",
-          "data"
-        ]
+        "required": ["target", "identifier", "attribute", "data"]
       }
     },
     {
@@ -375,11 +340,7 @@
             "description": "Attribute ID or slug"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "attribute"
-        ]
+        "required": ["target", "identifier", "attribute"]
       }
     },
     {
@@ -414,19 +375,12 @@
                 "description": "Option color"
               }
             },
-            "required": [
-              "title"
-            ],
+            "required": ["title"],
             "additionalProperties": false,
             "description": "Select option data"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "attribute",
-          "data"
-        ]
+        "required": ["target", "identifier", "attribute", "data"]
       }
     },
     {
@@ -469,13 +423,7 @@
             "description": "Select option data to update"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "attribute",
-          "option",
-          "data"
-        ]
+        "required": ["target", "identifier", "attribute", "option", "data"]
       }
     },
     {
@@ -499,11 +447,7 @@
             "description": "Attribute ID or slug"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "attribute"
-        ]
+        "required": ["target", "identifier", "attribute"]
       }
     },
     {
@@ -538,19 +482,12 @@
                 "description": "Status color"
               }
             },
-            "required": [
-              "title"
-            ],
+            "required": ["title"],
             "additionalProperties": false,
             "description": "Status data"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "attribute",
-          "data"
-        ]
+        "required": ["target", "identifier", "attribute", "data"]
       }
     },
     {
@@ -593,13 +530,7 @@
             "description": "Status data to update"
           }
         },
-        "required": [
-          "target",
-          "identifier",
-          "attribute",
-          "status",
-          "data"
-        ]
+        "required": ["target", "identifier", "attribute", "status", "data"]
       }
     },
     {
@@ -635,10 +566,7 @@
                   "properties": {
                     "direction": {
                       "type": "string",
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
+                      "enum": ["asc", "desc"]
                     },
                     "field": {
                       "type": "string"
@@ -647,26 +575,18 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "direction",
-                    "field"
-                  ],
+                  "required": ["direction", "field"],
                   "additionalProperties": false
                 },
                 "description": "Array of sort criteria"
               }
             },
-            "required": [
-              "limit"
-            ],
+            "required": ["limit"],
             "additionalProperties": false,
             "description": "Search criteria, filters, and sorting options"
           }
         },
-        "required": [
-          "object",
-          "query"
-        ]
+        "required": ["object", "query"]
       }
     },
     {
@@ -686,10 +606,7 @@
             "description": "The ID of the record to retrieve"
           }
         },
-        "required": [
-          "object",
-          "record_id"
-        ]
+        "required": ["object", "record_id"]
       }
     },
     {
@@ -713,17 +630,12 @@
                 "description": "Key-value pairs of attributes for the new record"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The record data to create"
           }
         },
-        "required": [
-          "object",
-          "data"
-        ]
+        "required": ["object", "data"]
       }
     },
     {
@@ -751,18 +663,12 @@
                 "description": "Key-value pairs of attributes to update"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The record data to update"
           }
         },
-        "required": [
-          "object",
-          "record_id",
-          "data"
-        ]
+        "required": ["object", "record_id", "data"]
       }
     },
     {
@@ -790,18 +696,12 @@
                 "description": "Key-value pairs of attributes to overwrite"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The record data to overwrite"
           }
         },
-        "required": [
-          "object",
-          "record_id",
-          "data"
-        ]
+        "required": ["object", "record_id", "data"]
       }
     },
     {
@@ -829,17 +729,12 @@
                 "description": "Attribute to match against for existing records"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The record data with matching criteria"
           }
         },
-        "required": [
-          "object",
-          "data"
-        ]
+        "required": ["object", "data"]
       }
     },
     {
@@ -859,10 +754,7 @@
             "description": "The ID of the record to delete"
           }
         },
-        "required": [
-          "object",
-          "record_id"
-        ]
+        "required": ["object", "record_id"]
       }
     },
     {
@@ -890,11 +782,7 @@
             "description": "Include historic values"
           }
         },
-        "required": [
-          "object",
-          "record_id",
-          "attribute"
-        ]
+        "required": ["object", "record_id", "attribute"]
       }
     },
     {
@@ -914,10 +802,7 @@
             "description": "The ID of the record"
           }
         },
-        "required": [
-          "object",
-          "record_id"
-        ]
+        "required": ["object", "record_id"]
       }
     },
     {
@@ -949,10 +834,7 @@
                   "properties": {
                     "direction": {
                       "type": "string",
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
+                      "enum": ["asc", "desc"]
                     },
                     "field": {
                       "type": "string"
@@ -961,25 +843,18 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "direction",
-                    "field"
-                  ],
+                  "required": ["direction", "field"],
                   "additionalProperties": false
                 },
                 "description": "Array of sort criteria"
               }
             },
-            "required": [
-              "limit"
-            ],
+            "required": ["limit"],
             "additionalProperties": false,
             "description": "Search criteria, filters, and sorting options"
           }
         },
-        "required": [
-          "query"
-        ]
+        "required": ["query"]
       }
     },
     {
@@ -995,9 +870,7 @@
             "description": "The ID of the person to retrieve"
           }
         },
-        "required": [
-          "person_id"
-        ]
+        "required": ["person_id"]
       }
     },
     {
@@ -1017,16 +890,12 @@
                 "description": "Key-value pairs of attributes for the new person (e.g., first_name, last_name, email)"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The person data to create"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -1050,17 +919,12 @@
                 "description": "Key-value pairs of attributes to update"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The person data to update"
           }
         },
-        "required": [
-          "person_id",
-          "data"
-        ]
+        "required": ["person_id", "data"]
       }
     },
     {
@@ -1076,9 +940,7 @@
             "description": "The ID of the person to delete"
           }
         },
-        "required": [
-          "person_id"
-        ]
+        "required": ["person_id"]
       }
     },
     {
@@ -1104,10 +966,7 @@
                   "properties": {
                     "direction": {
                       "type": "string",
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
+                      "enum": ["asc", "desc"]
                     },
                     "field": {
                       "type": "string"
@@ -1116,10 +975,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "direction",
-                    "field"
-                  ],
+                  "required": ["direction", "field"],
                   "additionalProperties": false
                 },
                 "description": "Array of sort criteria with direction and attribute"
@@ -1136,16 +992,12 @@
                 "description": "Number of companies to skip for pagination"
               }
             },
-            "required": [
-              "limit"
-            ],
+            "required": ["limit"],
             "additionalProperties": false,
             "description": "Search criteria, filters, and sorting options"
           }
         },
-        "required": [
-          "query"
-        ]
+        "required": ["query"]
       }
     },
     {
@@ -1162,9 +1014,7 @@
             "description": "UUID of the company record to retrieve"
           }
         },
-        "required": [
-          "company_id"
-        ]
+        "required": ["company_id"]
       }
     },
     {
@@ -1184,16 +1034,12 @@
                 "description": "Key-value pairs of attributes for the new company. Standard attributes include: domains (array), name (string), description (string), team (array of emails), primary_location (string), categories (array), foundation_date (string), employee_range (string), etc."
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The company data to create"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -1218,17 +1064,12 @@
                 "description": "Key-value pairs of attributes to update. For multiselect attributes, values will be appended to existing values."
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The company data to update"
           }
         },
-        "required": [
-          "company_id",
-          "data"
-        ]
+        "required": ["company_id", "data"]
       }
     },
     {
@@ -1248,9 +1089,7 @@
                 "description": "Key-value pairs of attributes for the company"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The company data to create or update"
           },
@@ -1259,9 +1098,7 @@
             "description": "The ID or slug of the attribute to use for matching existing companies. For companies, 'domains' is the default unique attribute"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -1278,9 +1115,7 @@
             "description": "UUID of the company record to delete"
           }
         },
-        "required": [
-          "company_id"
-        ]
+        "required": ["company_id"]
       }
     },
     {
@@ -1316,11 +1151,7 @@
             "description": "Number of results to skip for pagination"
           }
         },
-        "required": [
-          "company_id",
-          "attribute",
-          "limit"
-        ]
+        "required": ["company_id", "attribute", "limit"]
       }
     },
     {
@@ -1348,10 +1179,7 @@
             "description": "Number of results to skip for pagination"
           }
         },
-        "required": [
-          "company_id",
-          "limit"
-        ]
+        "required": ["company_id", "limit"]
       }
     },
     {
@@ -1372,10 +1200,7 @@
                   "properties": {
                     "direction": {
                       "type": "string",
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
+                      "enum": ["asc", "desc"]
                     },
                     "field": {
                       "type": "string"
@@ -1384,10 +1209,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "direction",
-                    "field"
-                  ],
+                  "required": ["direction", "field"],
                   "additionalProperties": false
                 },
                 "description": "Array of sort criteria"
@@ -1404,16 +1226,12 @@
                 "description": "Number of deals to skip for pagination"
               }
             },
-            "required": [
-              "limit"
-            ],
+            "required": ["limit"],
             "additionalProperties": false,
             "description": "Search criteria, filters, and sorting options"
           }
         },
-        "required": [
-          "query"
-        ]
+        "required": ["query"]
       }
     },
     {
@@ -1429,9 +1247,7 @@
             "description": "The ID of the deal to retrieve"
           }
         },
-        "required": [
-          "deal_id"
-        ]
+        "required": ["deal_id"]
       }
     },
     {
@@ -1451,16 +1267,12 @@
                 "description": "Key-value pairs of attributes for the new deal. Standard attributes include: name (string), stage (string), owner (string/email), value (number), associated_people (array), associated_company (object)"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The deal data to create"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -1484,17 +1296,12 @@
                 "description": "Key-value pairs of attributes to update"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The deal data to update"
           }
         },
-        "required": [
-          "deal_id",
-          "data"
-        ]
+        "required": ["deal_id", "data"]
       }
     },
     {
@@ -1518,16 +1325,12 @@
                 "description": "The ID or slug of the attribute to use to check if a deal already exists. The attribute must be unique."
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The deal data with matching criteria for assert operation"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -1543,9 +1346,7 @@
             "description": "The ID of the deal to delete"
           }
         },
-        "required": [
-          "deal_id"
-        ]
+        "required": ["deal_id"]
       }
     },
     {
@@ -1577,10 +1378,7 @@
             "description": "Number of results to skip"
           }
         },
-        "required": [
-          "deal_id",
-          "attribute"
-        ]
+        "required": ["deal_id", "attribute"]
       }
     },
     {
@@ -1604,9 +1402,7 @@
             "description": "Number of results to skip"
           }
         },
-        "required": [
-          "deal_id"
-        ]
+        "required": ["deal_id"]
       }
     },
     {
@@ -1655,26 +1451,18 @@
                       "description": "Access level (e.g., 'read', 'write', 'admin')"
                     }
                   },
-                  "required": [
-                    "workspace_member_id",
-                    "level"
-                  ],
+                  "required": ["workspace_member_id", "level"],
                   "additionalProperties": false
                 },
                 "description": "Workspace member access"
               }
             },
-            "required": [
-              "name",
-              "parent_object"
-            ],
+            "required": ["name", "parent_object"],
             "additionalProperties": false,
             "description": "List data to create"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -1690,9 +1478,7 @@
             "description": "List ID or slug"
           }
         },
-        "required": [
-          "list"
-        ]
+        "required": ["list"]
       }
     },
     {
@@ -1732,10 +1518,7 @@
                       "description": "Access level (e.g., 'read', 'write', 'admin')"
                     }
                   },
-                  "required": [
-                    "workspace_member_id",
-                    "level"
-                  ],
+                  "required": ["workspace_member_id", "level"],
                   "additionalProperties": false
                 },
                 "description": "Workspace member access"
@@ -1745,10 +1528,7 @@
             "description": "List data to update"
           }
         },
-        "required": [
-          "list",
-          "data"
-        ]
+        "required": ["list", "data"]
       }
     },
     {
@@ -1784,10 +1564,7 @@
                   "properties": {
                     "direction": {
                       "type": "string",
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
+                      "enum": ["asc", "desc"]
                     },
                     "field": {
                       "type": "string"
@@ -1796,10 +1573,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "direction",
-                    "field"
-                  ],
+                  "required": ["direction", "field"],
                   "additionalProperties": false
                 },
                 "description": "Sort criteria"
@@ -1809,9 +1583,7 @@
             "description": "Search criteria and filters"
           }
         },
-        "required": [
-          "list"
-        ]
+        "required": ["list"]
       }
     },
     {
@@ -1839,17 +1611,12 @@
                 "description": "Additional attribute values for the list entry"
               }
             },
-            "required": [
-              "parent_record"
-            ],
+            "required": ["parent_record"],
             "additionalProperties": false,
             "description": "Entry data"
           }
         },
-        "required": [
-          "list",
-          "data"
-        ]
+        "required": ["list", "data"]
       }
     },
     {
@@ -1877,17 +1644,12 @@
                 "description": "Attribute values for the list entry"
               }
             },
-            "required": [
-              "parent_record"
-            ],
+            "required": ["parent_record"],
             "additionalProperties": false,
             "description": "Entry data"
           }
         },
-        "required": [
-          "list",
-          "data"
-        ]
+        "required": ["list", "data"]
       }
     },
     {
@@ -1907,10 +1669,7 @@
             "description": "ID of the entry to remove"
           }
         },
-        "required": [
-          "list",
-          "entry_id"
-        ]
+        "required": ["list", "entry_id"]
       }
     },
     {
@@ -1930,10 +1689,7 @@
             "description": "ID of the entry to get"
           }
         },
-        "required": [
-          "list",
-          "entry_id"
-        ]
+        "required": ["list", "entry_id"]
       }
     },
     {
@@ -1961,18 +1717,12 @@
                 "description": "Attribute values to update"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "Updated entry data"
           }
         },
-        "required": [
-          "list",
-          "entry_id",
-          "data"
-        ]
+        "required": ["list", "entry_id", "data"]
       }
     },
     {
@@ -2000,18 +1750,12 @@
                 "description": "Attribute values to overwrite"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "Entry data to overwrite"
           }
         },
-        "required": [
-          "list",
-          "entry_id",
-          "data"
-        ]
+        "required": ["list", "entry_id", "data"]
       }
     },
     {
@@ -2039,11 +1783,7 @@
             "description": "Include historic values"
           }
         },
-        "required": [
-          "list",
-          "entry_id",
-          "attribute"
-        ]
+        "required": ["list", "entry_id", "attribute"]
       }
     },
     {
@@ -2070,9 +1810,7 @@
             "description": "Number of notes to skip for pagination"
           }
         },
-        "required": [
-          "limit"
-        ]
+        "required": ["limit"]
       }
     },
     {
@@ -2088,9 +1826,7 @@
             "description": "The ID of the note to retrieve"
           }
         },
-        "required": [
-          "note_id"
-        ]
+        "required": ["note_id"]
       }
     },
     {
@@ -2118,10 +1854,7 @@
             "description": "The object type (e.g., 'people', 'companies') - defaults to 'people'"
           }
         },
-        "required": [
-          "record_id",
-          "content"
-        ]
+        "required": ["record_id", "content"]
       }
     },
     {
@@ -2137,9 +1870,7 @@
             "description": "The ID of the note to delete"
           }
         },
-        "required": [
-          "note_id"
-        ]
+        "required": ["note_id"]
       }
     },
     {
@@ -2170,9 +1901,7 @@
             "description": "Number of tasks to skip for pagination"
           }
         },
-        "required": [
-          "limit"
-        ]
+        "required": ["limit"]
       }
     },
     {
@@ -2188,9 +1917,7 @@
             "description": "The ID of the task to retrieve"
           }
         },
-        "required": [
-          "task_id"
-        ]
+        "required": ["task_id"]
       }
     },
     {
@@ -2221,9 +1948,7 @@
             "description": "Optional: array of record IDs to link to the task"
           }
         },
-        "required": [
-          "content"
-        ]
+        "required": ["content"]
       }
     },
     {
@@ -2260,10 +1985,7 @@
                   "description": "ID of the actor to assign"
                 }
               },
-              "required": [
-                "referenced_actor_type",
-                "referenced_actor_id"
-              ],
+              "required": ["referenced_actor_type", "referenced_actor_id"],
               "additionalProperties": false
             },
             "description": "Update task assignees"
@@ -2282,18 +2004,13 @@
                   "description": "ID of the linked record"
                 }
               },
-              "required": [
-                "target_object",
-                "target_record_id"
-              ],
+              "required": ["target_object", "target_record_id"],
               "additionalProperties": false
             },
             "description": "Update linked records"
           }
         },
-        "required": [
-          "task_id"
-        ]
+        "required": ["task_id"]
       }
     },
     {
@@ -2309,9 +2026,7 @@
             "description": "The ID of the task to delete"
           }
         },
-        "required": [
-          "task_id"
-        ]
+        "required": ["task_id"]
       }
     },
     {
@@ -2342,9 +2057,7 @@
             "description": "Number of threads to skip for pagination"
           }
         },
-        "required": [
-          "limit"
-        ]
+        "required": ["limit"]
       }
     },
     {
@@ -2360,9 +2073,7 @@
             "description": "The ID of the thread to retrieve"
           }
         },
-        "required": [
-          "thread_id"
-        ]
+        "required": ["thread_id"]
       }
     },
     {
@@ -2390,9 +2101,7 @@
             "description": "Optional: ID of existing thread to reply to"
           }
         },
-        "required": [
-          "content"
-        ]
+        "required": ["content"]
       }
     },
     {
@@ -2408,9 +2117,7 @@
             "description": "The ID of the comment to retrieve"
           }
         },
-        "required": [
-          "comment_id"
-        ]
+        "required": ["comment_id"]
       }
     },
     {
@@ -2426,9 +2133,7 @@
             "description": "The ID of the comment to delete"
           }
         },
-        "required": [
-          "comment_id"
-        ]
+        "required": ["comment_id"]
       }
     },
     {
@@ -2460,10 +2165,7 @@
                   "properties": {
                     "direction": {
                       "type": "string",
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
+                      "enum": ["asc", "desc"]
                     },
                     "field": {
                       "type": "string"
@@ -2472,25 +2174,18 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "direction",
-                    "field"
-                  ],
+                  "required": ["direction", "field"],
                   "additionalProperties": false
                 },
                 "description": "Array of sort criteria"
               }
             },
-            "required": [
-              "limit"
-            ],
+            "required": ["limit"],
             "additionalProperties": false,
             "description": "Search criteria, filters, and sorting options"
           }
         },
-        "required": [
-          "query"
-        ]
+        "required": ["query"]
       }
     },
     {
@@ -2506,9 +2201,7 @@
             "description": "The ID of the user to retrieve"
           }
         },
-        "required": [
-          "user_id"
-        ]
+        "required": ["user_id"]
       }
     },
     {
@@ -2528,16 +2221,12 @@
                 "description": "Key-value pairs of attributes for the new user"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The user data to create"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -2561,17 +2250,12 @@
                 "description": "Key-value pairs of attributes to update"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The user data to update"
           }
         },
-        "required": [
-          "user_id",
-          "data"
-        ]
+        "required": ["user_id", "data"]
       }
     },
     {
@@ -2587,9 +2271,7 @@
             "description": "The ID of the user to delete"
           }
         },
-        "required": [
-          "user_id"
-        ]
+        "required": ["user_id"]
       }
     },
     {
@@ -2621,10 +2303,7 @@
                   "properties": {
                     "direction": {
                       "type": "string",
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
+                      "enum": ["asc", "desc"]
                     },
                     "field": {
                       "type": "string"
@@ -2633,25 +2312,18 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "direction",
-                    "field"
-                  ],
+                  "required": ["direction", "field"],
                   "additionalProperties": false
                 },
                 "description": "Array of sort criteria"
               }
             },
-            "required": [
-              "limit"
-            ],
+            "required": ["limit"],
             "additionalProperties": false,
             "description": "Search criteria, filters, and sorting options"
           }
         },
-        "required": [
-          "query"
-        ]
+        "required": ["query"]
       }
     },
     {
@@ -2667,9 +2339,7 @@
             "description": "The ID of the workspace to retrieve"
           }
         },
-        "required": [
-          "workspace_id"
-        ]
+        "required": ["workspace_id"]
       }
     },
     {
@@ -2689,16 +2359,12 @@
                 "description": "Key-value pairs of attributes for the new workspace"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The workspace data to create"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -2722,17 +2388,12 @@
                 "description": "Key-value pairs of attributes to update"
               }
             },
-            "required": [
-              "values"
-            ],
+            "required": ["values"],
             "additionalProperties": false,
             "description": "The workspace data to update"
           }
         },
-        "required": [
-          "workspace_id",
-          "data"
-        ]
+        "required": ["workspace_id", "data"]
       }
     },
     {
@@ -2748,9 +2409,7 @@
             "description": "The ID of the workspace to delete"
           }
         },
-        "required": [
-          "workspace_id"
-        ]
+        "required": ["workspace_id"]
       }
     },
     {
@@ -2766,9 +2425,7 @@
             "description": "The ID of the meeting to retrieve"
           }
         },
-        "required": [
-          "meeting_id"
-        ]
+        "required": ["meeting_id"]
       }
     },
     {
@@ -2808,25 +2465,18 @@
                       "description": "Optional filter for the subscription"
                     }
                   },
-                  "required": [
-                    "event_type"
-                  ],
+                  "required": ["event_type"],
                   "additionalProperties": false
                 },
                 "description": "Webhook subscriptions"
               }
             },
-            "required": [
-              "url",
-              "subscriptions"
-            ],
+            "required": ["url", "subscriptions"],
             "additionalProperties": false,
             "description": "Webhook data to create"
           }
         },
-        "required": [
-          "data"
-        ]
+        "required": ["data"]
       }
     },
     {
@@ -2842,9 +2492,7 @@
             "description": "The ID of the webhook to retrieve"
           }
         },
-        "required": [
-          "webhook_id"
-        ]
+        "required": ["webhook_id"]
       }
     },
     {
@@ -2879,9 +2527,7 @@
                       "description": "Optional filter for the subscription"
                     }
                   },
-                  "required": [
-                    "event_type"
-                  ],
+                  "required": ["event_type"],
                   "additionalProperties": false
                 },
                 "description": "Webhook subscriptions"
@@ -2891,10 +2537,7 @@
             "description": "Webhook data to update"
           }
         },
-        "required": [
-          "webhook_id",
-          "data"
-        ]
+        "required": ["webhook_id", "data"]
       }
     },
     {
@@ -2910,9 +2553,7 @@
             "description": "The ID of the webhook to delete"
           }
         },
-        "required": [
-          "webhook_id"
-        ]
+        "required": ["webhook_id"]
       }
     }
   ]
