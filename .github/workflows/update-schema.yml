@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  GITHUB_TOKEN: ${{ secrets.CROSS_REPO_PAT }}
+  PAT_TOKEN: ${{ secrets.CROSS_REPO_PAT }}
 
 jobs:
   update-schema:
@@ -83,7 +83,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: hypermodeinc/community-mcp
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.PAT_TOKEN }}
           path: community-mcp
 
       - name: Checkout hypermode repo
@@ -91,7 +91,7 @@ jobs:
         with:
           repository: hypermodeinc/hypermode
           ref: main # explicitly specify the branch
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.PAT_TOKEN }}
           path: hypermode
 
       - name: Copy schema file and check for differences
@@ -115,7 +115,7 @@ jobs:
         if: steps.sync_check.outputs.sync_needed == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.PAT_TOKEN }}
           path: hypermode
           commit-message: "chore: update Attio tools schema from community-mcp"
           title: "Update Attio tools schema"
