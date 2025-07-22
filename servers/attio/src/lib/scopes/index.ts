@@ -42,7 +42,6 @@ export const allToolDefinitions = {
   ...miscToolDefinitions,
 };
 
-
 import { testActions } from "./test";
 import { workspaceActions } from "./workspace";
 import { objectsActions } from "./objects";
