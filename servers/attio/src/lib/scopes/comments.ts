@@ -7,10 +7,6 @@ import {
 } from "../base/api-client";
 import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
 
-// ===============================
-// COMMENTS & THREADS SCHEMAS
-// ===============================
-
 export const listThreadsSchema = {
   record_id: z
     .string()
@@ -36,30 +32,6 @@ export const listThreadsSchema = {
 
 export const getThreadSchema = {
   thread_id: z.string().describe("The ID of the thread to retrieve"),
-};
-
-export const createCommentSchema = {
-  content: z.string().describe("The comment content"),
-  record_id: z
-    .string()
-    .optional()
-    .describe("Optional: ID of record to comment on (for new thread)"),
-  entry_id: z
-    .string()
-    .optional()
-    .describe("Optional: ID of list entry to comment on (for new thread)"),
-  thread_id: z
-    .string()
-    .optional()
-    .describe("Optional: ID of existing thread to reply to"),
-};
-
-export const getCommentSchema = {
-  comment_id: z.string().describe("The ID of the comment to retrieve"),
-};
-
-export const deleteCommentSchema = {
-  comment_id: z.string().describe("The ID of the comment to delete"),
 };
 
 export async function listThreads(
@@ -118,109 +90,6 @@ export async function getThread(
   }
 }
 
-export async function createComment(
-  args: {
-    content: string;
-    record_id?: string;
-    entry_id?: string;
-    thread_id?: string;
-  },
-  context?: { authToken?: string },
-): Promise<McpResponse> {
-  try {
-    const { content, record_id, entry_id, thread_id } = args;
-    let commentData: any = {
-      format: "plaintext",
-      content,
-      author: {
-        type: "workspace-member",
-        id: "current",
-      },
-    };
-
-    if (thread_id) {
-      commentData.thread_id = thread_id;
-    } else if (record_id) {
-      commentData.record = {
-        target_object: "people",
-        target_record_id: record_id,
-      };
-    } else if (entry_id) {
-      commentData.entry = {
-        target_list: "default",
-        target_entry_id: entry_id,
-      };
-    }
-
-    const response = await makeAttioRequest(
-      "/v2/comments",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          data: commentData,
-        }),
-      },
-      context?.authToken,
-    );
-
-    return createMcpResponse(
-      response,
-      `Successfully created comment:\n\n${JSON.stringify(response, null, 2)}`,
-    );
-  } catch (error) {
-    return createErrorResponse(error, "creating comment");
-  }
-}
-
-export async function getComment(
-  args: {
-    comment_id: string;
-  },
-  context?: { authToken?: string },
-): Promise<McpResponse> {
-  try {
-    const response = await makeAttioRequest(
-      `/v2/comments/${args.comment_id}`,
-      {},
-      context?.authToken,
-    );
-    return createMcpResponse(
-      response,
-      `Comment details:\n\n${JSON.stringify(response, null, 2)}`,
-    );
-  } catch (error) {
-    return createErrorResponse(error, "getting comment");
-  }
-}
-
-export async function deleteComment(
-  args: {
-    comment_id: string;
-  },
-  context?: { authToken?: string },
-): Promise<McpResponse> {
-  try {
-    await makeAttioRequest(
-      `/v2/comments/${args.comment_id}`,
-      {
-        method: "DELETE",
-      },
-      context?.authToken,
-    );
-
-    return createMcpResponse(
-      null,
-      `Successfully deleted comment ${args.comment_id}`,
-    );
-  } catch (error) {
-    return createErrorResponse(error, "deleting comment");
-  }
-}
-
-// ===============================
-// COMMENTS & THREADS TOOL DEFINITIONS
-// ===============================
-
 export const commentsToolDefinitions = {
   list_threads: {
     description: "List comment threads, optionally filtered by record or entry",
@@ -230,29 +99,9 @@ export const commentsToolDefinitions = {
     description: "Get all comments in a thread",
     schema: getThreadSchema,
   },
-  create_comment: {
-    description:
-      "Create a new comment on a record, list entry, or existing thread",
-    schema: createCommentSchema,
-  },
-  get_comment: {
-    description: "Get a specific comment by ID",
-    schema: getCommentSchema,
-  },
-  delete_comment: {
-    description: "Delete a comment by ID",
-    schema: deleteCommentSchema,
-  },
 };
-
-// ===============================
-// COMMENTS & THREADS ACTIONS MAPPING
-// ===============================
 
 export const commentsActions = {
   list_threads: listThreads,
   get_thread: getThread,
-  create_comment: createComment,
-  get_comment: getComment,
-  delete_comment: deleteComment,
 };
