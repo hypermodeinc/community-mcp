@@ -8,7 +8,6 @@ export * from "./companies";
 export * from "./deals";
 export * from "./lists";
 export * from "./notes";
-export * from "./tasks";
 export * from "./comments";
 export * from "./misc";
 
@@ -22,7 +21,6 @@ import { companiesToolDefinitions } from "./companies";
 import { dealsToolDefinitions } from "./deals";
 import { listsToolDefinitions } from "./lists";
 import { notesToolDefinitions } from "./notes";
-import { tasksToolDefinitions } from "./tasks";
 import { commentsToolDefinitions } from "./comments";
 import { miscToolDefinitions } from "./misc";
 
@@ -37,7 +35,6 @@ export const allToolDefinitions = {
   ...dealsToolDefinitions,
   ...listsToolDefinitions,
   ...notesToolDefinitions,
-  ...tasksToolDefinitions,
   ...commentsToolDefinitions,
   ...miscToolDefinitions,
 };
@@ -52,7 +49,6 @@ import { companiesActions } from "./companies";
 import { dealsActions } from "./deals";
 import { listsActions } from "./lists";
 import { notesActions } from "./notes";
-import { tasksActions } from "./tasks";
 import { commentsActions } from "./comments";
 import { miscActions } from "./misc";
 
@@ -67,7 +63,6 @@ export const allActions = {
   ...dealsActions,
   ...listsActions,
   ...notesActions,
-  ...tasksActions,
   ...commentsActions,
   ...miscActions,
 };
