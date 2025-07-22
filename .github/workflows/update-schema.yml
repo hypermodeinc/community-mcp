@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  PAT_TOKEN: ${{ secrets.CROSS_REPO_PAT }}
+  PAT_TOKEN: ${{ secrets.GO_PRIVATE_MODULES }}
 
 jobs:
   update-schema:
