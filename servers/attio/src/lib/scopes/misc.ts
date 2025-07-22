@@ -106,66 +106,8 @@ export const deleteWorkspaceSchema = {
   workspace_id: z.string().describe("The ID of the workspace to delete"),
 };
 
-// ===============================
-// MEETINGS SCHEMAS
-// ===============================
-
 export const getMeetingSchema = {
   meeting_id: z.string().describe("The ID of the meeting to retrieve"),
-};
-
-// ===============================
-// WEBHOOKS SCHEMAS
-// ===============================
-
-export const listWebhooksSchema = {};
-
-export const createWebhookSchema = {
-  data: z
-    .object({
-      url: z.string().describe("Webhook URL"),
-      subscriptions: z
-        .array(
-          z.object({
-            event_type: z.string().describe("Event type for the subscription"),
-            filter: z
-              .record(z.unknown())
-              .optional()
-              .describe("Optional filter for the subscription"),
-          }),
-        )
-        .describe("Webhook subscriptions"),
-    })
-    .describe("Webhook data to create"),
-};
-
-export const getWebhookSchema = {
-  webhook_id: z.string().describe("The ID of the webhook to retrieve"),
-};
-
-export const updateWebhookSchema = {
-  webhook_id: z.string().describe("The ID of the webhook to update"),
-  data: z
-    .object({
-      url: z.string().optional().describe("Webhook URL"),
-      subscriptions: z
-        .array(
-          z.object({
-            event_type: z.string().describe("Event type for the subscription"),
-            filter: z
-              .record(z.unknown())
-              .optional()
-              .describe("Optional filter for the subscription"),
-          }),
-        )
-        .optional()
-        .describe("Webhook subscriptions"),
-    })
-    .describe("Webhook data to update"),
-};
-
-export const deleteWebhookSchema = {
-  webhook_id: z.string().describe("The ID of the webhook to delete"),
 };
 
 export async function searchUsers(
@@ -438,126 +380,6 @@ export async function getMeeting(
   }
 }
 
-// ===============================
-// WEBHOOKS ACTIONS
-// ===============================
-
-export async function listWebhooks(context?: {
-  authToken?: string;
-}): Promise<McpResponse> {
-  try {
-    const response = await makeAttioRequest(
-      "/v2/webhooks",
-      {},
-      context?.authToken,
-    );
-    return createMcpResponse(
-      response,
-      `Webhooks:\n\n${JSON.stringify(response, null, 2)}`,
-    );
-  } catch (error) {
-    return createErrorResponse(error, "listing webhooks");
-  }
-}
-
-export async function createWebhook(
-  args: { data: any },
-  context?: { authToken?: string },
-): Promise<McpResponse> {
-  try {
-    const response = await makeAttioRequest(
-      "/v2/webhooks",
-      {
-        method: "POST",
-        body: JSON.stringify(args.data),
-      },
-      context?.authToken,
-    );
-
-    return createMcpResponse(
-      response,
-      `Successfully created webhook:\n\n${JSON.stringify(response, null, 2)}`,
-    );
-  } catch (error) {
-    return createErrorResponse(error, "creating webhook");
-  }
-}
-
-export async function getWebhook(
-  args: {
-    webhook_id: string;
-  },
-  context?: { authToken?: string },
-): Promise<McpResponse> {
-  try {
-    const response = await makeAttioRequest(
-      `/v2/webhooks/${args.webhook_id}`,
-      {},
-      context?.authToken,
-    );
-    return createMcpResponse(
-      response,
-      `Webhook details:\n\n${JSON.stringify(response, null, 2)}`,
-    );
-  } catch (error) {
-    return createErrorResponse(error, "getting webhook");
-  }
-}
-
-export async function updateWebhook(
-  args: {
-    webhook_id: string;
-    data: any;
-  },
-  context?: { authToken?: string },
-): Promise<McpResponse> {
-  try {
-    const response = await makeAttioRequest(
-      `/v2/webhooks/${args.webhook_id}`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(args.data),
-      },
-      context?.authToken,
-    );
-
-    return createMcpResponse(
-      response,
-      `Successfully updated webhook:\n\n${JSON.stringify(response, null, 2)}`,
-    );
-  } catch (error) {
-    return createErrorResponse(error, "updating webhook");
-  }
-}
-
-export async function deleteWebhook(
-  args: {
-    webhook_id: string;
-  },
-  context?: { authToken?: string },
-): Promise<McpResponse> {
-  try {
-    await makeAttioRequest(
-      `/v2/webhooks/${args.webhook_id}`,
-      {
-        method: "DELETE",
-      },
-      context?.authToken,
-    );
-
-    return createMcpResponse(
-      null,
-      `Successfully deleted webhook ${args.webhook_id}`,
-    );
-  } catch (error) {
-    return createErrorResponse(error, "deleting webhook");
-  }
-}
-
-// ===============================
-// MISCELLANEOUS TOOL DEFINITIONS
-// ===============================
-
 export const miscToolDefinitions = {
   // Users
   search_users: {
@@ -610,28 +432,6 @@ export const miscToolDefinitions = {
     description: "Get a specific meeting by ID",
     schema: getMeetingSchema,
   },
-
-  // Webhooks
-  list_webhooks: {
-    description: "List all webhooks in the workspace",
-    schema: listWebhooksSchema,
-  },
-  create_webhook: {
-    description: "Create a new webhook",
-    schema: createWebhookSchema,
-  },
-  get_webhook: {
-    description: "Get a specific webhook by ID",
-    schema: getWebhookSchema,
-  },
-  update_webhook: {
-    description: "Update an existing webhook",
-    schema: updateWebhookSchema,
-  },
-  delete_webhook: {
-    description: "Delete a webhook by ID",
-    schema: deleteWebhookSchema,
-  },
 };
 
 // ===============================
@@ -655,11 +455,4 @@ export const miscActions = {
 
   // Meetings
   get_meeting: getMeeting,
-
-  // Webhooks
-  list_webhooks: listWebhooks,
-  create_webhook: createWebhook,
-  get_webhook: getWebhook,
-  update_webhook: updateWebhook,
-  delete_webhook: deleteWebhook,
 };

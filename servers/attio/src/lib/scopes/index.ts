@@ -12,10 +12,6 @@ export * from "./tasks";
 export * from "./comments";
 export * from "./misc";
 
-// ===============================
-// CONSOLIDATED TOOL DEFINITIONS
-// ===============================
-
 import { testToolDefinitions } from "./test";
 import { workspaceToolDefinitions } from "./workspace";
 import { objectsToolDefinitions } from "./objects";
@@ -46,9 +42,6 @@ export const allToolDefinitions = {
   ...miscToolDefinitions,
 };
 
-// ===============================
-// CONSOLIDATED ACTIONS
-// ===============================
 
 import { testActions } from "./test";
 import { workspaceActions } from "./workspace";
@@ -80,26 +73,5 @@ export const allActions = {
   ...miscActions,
 };
 
-// ===============================
-// UPDATED TOOLS.TS REPLACEMENT
-// ===============================
-
-/**
- * This file should replace the existing src/lib/tools.ts
- * It re-exports everything from the scoped modules for backwards compatibility
- */
-
-// Legacy export for backwards compatibility
 export const toolDefinitions = allToolDefinitions;
-
-// ===============================
-// UPDATED ACTIONS.TS REPLACEMENT
-// ===============================
-
-/**
- * This file should replace the existing src/lib/actions.ts
- * It re-exports everything from the scoped modules for backwards compatibility
- */
-
-// Legacy export for backwards compatibility
 export const actions = allActions;
