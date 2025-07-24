@@ -32,6 +32,106 @@ export const getPersonSchema = {
   person_id: z.string().describe("The ID of the person to retrieve"),
 };
 
+export const createPersonSchema = {
+  data: z
+    .object({
+      values: z
+        .record(z.unknown())
+        .describe(
+          "Key-value pairs of attributes for the new person (e.g., first_name, last_name, email)",
+        ),
+    })
+    .describe("The person data to create"),
+};
+
+export const updatePersonSchema = {
+  person_id: z.string().describe("The ID of the person to update"),
+  data: z
+    .object({
+      values: z
+        .record(z.unknown())
+        .describe("Key-value pairs of attributes to update"),
+    })
+    .describe("The person data to update"),
+};
+
+export const deletePersonSchema = {
+  person_id: z.string().describe("The ID of the person to delete"),
+};
+
+export async function createPerson(
+  args: { data: any },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
+  try {
+    const response = await makeAttioRequest(
+      `/v2/objects/people/records`,
+      {
+        method: "POST",
+        body: JSON.stringify(args.data),
+      },
+      context?.authToken,
+    );
+
+    return createMcpResponse(
+      response,
+      `Successfully created new person:\n\n${JSON.stringify(response, null, 2)}`,
+    );
+  } catch (error) {
+    return createErrorResponse(error, "creating person");
+  }
+}
+
+export async function updatePerson(
+  args: {
+    person_id: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
+  try {
+    const response = await makeAttioRequest(
+      `/v2/objects/people/records/${args.person_id}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(args.data),
+      },
+      context?.authToken,
+    );
+
+    return createMcpResponse(
+      response,
+      `Successfully updated person ${args.person_id}:\n\n${JSON.stringify(response, null, 2)}`,
+    );
+  } catch (error) {
+    return createErrorResponse(error, "updating person");
+  }
+}
+
+export async function deletePerson(
+  args: {
+    person_id: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
+  try {
+    await makeAttioRequest(
+      `/v2/objects/people/records/${args.person_id}`,
+      {
+        method: "DELETE",
+      },
+      context?.authToken,
+    );
+
+    return createMcpResponse(
+      null,
+      `Successfully deleted person ${args.person_id}`,
+    );
+  } catch (error) {
+    return createErrorResponse(error, "deleting person");
+  }
+}
+
 export async function searchPeople(
   args: { query: any },
   context?: { authToken?: string },
@@ -93,6 +193,18 @@ export const peopleToolDefinitions = {
     description: "Get a specific person by ID with all their data",
     schema: getPersonSchema,
   },
+  create_person: {
+    description: "Create a new person in Attio CRM",
+    schema: createPersonSchema,
+  },
+  update_person: {
+    description: "Update an existing person in Attio CRM",
+    schema: updatePersonSchema,
+  },
+  delete_person: {
+    description: "Delete a person by ID",
+    schema: deletePersonSchema,
+  },
 };
 
 // ===============================
@@ -102,4 +214,7 @@ export const peopleToolDefinitions = {
 export const peopleActions = {
   search_people: searchPeople,
   get_person: getPerson,
+  create_person: createPerson,
+  update_person: updatePerson,
+  delete_person: deletePerson,
 };

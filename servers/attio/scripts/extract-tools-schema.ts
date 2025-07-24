@@ -38,9 +38,11 @@ function convertToMcpToolsSchema(
       };
 
       // Only process schema if it exists and has properties
-      if (definition.schema && Object.keys(definition.schema).length > 0) {
+      // @ts-ignore
+      if (definition?.schema && Object.keys(definition.schema).length > 0) {
         try {
           // Create a zod object from the schema definition
+          // @ts-ignore
           const zodObject = z.object(definition.schema);
 
           // Convert to JSON schema without refs and definitions
