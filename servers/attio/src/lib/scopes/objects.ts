@@ -10,8 +10,6 @@ import {
 // OBJECTS SCHEMAS
 // ===============================
 
-export const listObjectsSchema = {};
-
 export const getObjectSchema = {
   object: z
     .string()
@@ -61,9 +59,15 @@ export const getObjectAttributesSchema = {
 // OBJECTS ACTIONS
 // ===============================
 
-export async function listObjects(context?: { authToken?: string }): Promise<McpResponse> {
+export async function listObjects(context?: {
+  authToken?: string;
+}): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest("/v2/objects", {}, context?.authToken);
+    const response = await makeAttioRequest(
+      "/v2/objects",
+      {},
+      context?.authToken,
+    );
     return createMcpResponse(
       response,
       `Objects in workspace:\n\n${JSON.stringify(response, null, 2)}`,
@@ -73,11 +77,18 @@ export async function listObjects(context?: { authToken?: string }): Promise<Mcp
   }
 }
 
-export async function getObject(args: {
-  object: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getObject(
+  args: {
+    object: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/objects/${args.object}`, {}, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/objects/${args.object}`,
+      {},
+      context?.authToken,
+    );
     return createMcpResponse(
       response,
       `Object details:\n\n${JSON.stringify(response, null, 2)}`,
@@ -87,12 +98,19 @@ export async function getObject(args: {
   }
 }
 
-export async function createObject(args: { data: any }, context?: { authToken?: string }): Promise<McpResponse> {
+export async function createObject(
+  args: { data: any },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest("/v2/objects", {
-      method: "POST",
-      body: JSON.stringify(args.data),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      "/v2/objects",
+      {
+        method: "POST",
+        body: JSON.stringify(args.data),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -103,15 +121,22 @@ export async function createObject(args: { data: any }, context?: { authToken?: 
   }
 }
 
-export async function updateObject(args: {
-  object: string;
-  data: any;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function updateObject(
+  args: {
+    object: string;
+    data: any;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const response = await makeAttioRequest(`/v2/objects/${args.object}`, {
-      method: "PATCH",
-      body: JSON.stringify(args.data),
-    }, context?.authToken);
+    const response = await makeAttioRequest(
+      `/v2/objects/${args.object}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(args.data),
+      },
+      context?.authToken,
+    );
 
     return createMcpResponse(
       response,
@@ -122,9 +147,12 @@ export async function updateObject(args: {
   }
 }
 
-export async function getObjectAttributes(args: {
-  object: string;
-}, context?: { authToken?: string }): Promise<McpResponse> {
+export async function getObjectAttributes(
+  args: {
+    object: string;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
     const response = await makeAttioRequest(
       `/v2/objects/${args.object}/attributes`,
@@ -147,7 +175,6 @@ export async function getObjectAttributes(args: {
 export const objectsToolDefinitions = {
   list_objects: {
     description: "List all objects (both system and custom) in the workspace",
-    schema: listObjectsSchema,
   },
   get_object: {
     description: "Get detailed information about a specific object",

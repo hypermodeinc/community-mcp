@@ -29,10 +29,11 @@ function convertToMcpToolsSchema(
       const tool: McpTool = {
         name,
         description: definition.description,
+        // @ts-ignore
         inputSchema: {
           type: "object",
-          additionalProperties: false,
-          $schema: "http://json-schema.org/draft-07/schema#",
+          properties: {},
+          required: [],
         },
       };
 

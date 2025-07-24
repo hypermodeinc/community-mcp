@@ -8,8 +8,6 @@ import {
 import { GLOBAL_SEARCH_LIMIT, validatePagination } from "../utils/paginate";
 import { SortSchema } from "../types";
 
-export const listListsSchema = {};
-
 export const getListSchema = {
   list: z.string().describe("List ID or slug"),
 };
@@ -190,7 +188,6 @@ export async function getListEntryAttributeValues(
 export const listsToolDefinitions = {
   list_lists: {
     description: "Get all lists in the workspace",
-    schema: listListsSchema,
   },
   get_list: {
     description: "Get details of a specific list",

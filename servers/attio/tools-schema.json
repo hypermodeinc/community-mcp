@@ -5,14 +5,13 @@
       "description": "Test connection to Attio MCP server",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "message": {
             "type": "string",
             "description": "Optional test message"
           }
-        }
+        },
+        "required": []
       }
     },
     {
@@ -20,8 +19,8 @@
       "description": "Get comprehensive information about the Attio workspace structure, including objects, attributes, lists, and current user permissions",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "properties": {},
+        "required": []
       }
     },
     {
@@ -29,8 +28,8 @@
       "description": "List all workspace members and their details",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "properties": {},
+        "required": []
       }
     },
     {
@@ -38,8 +37,6 @@
       "description": "Get details of a specific workspace member",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "workspace_member_id": {
             "type": "string",
@@ -54,8 +51,8 @@
       "description": "Get information about the current API token and workspace",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "properties": {},
+        "required": []
       }
     },
     {
@@ -63,8 +60,8 @@
       "description": "List all objects (both system and custom) in the workspace",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "properties": {},
+        "required": []
       }
     },
     {
@@ -72,8 +69,6 @@
       "description": "Get detailed information about a specific object",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -88,8 +83,6 @@
       "description": "Create a new custom object in the workspace",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "data": {
             "type": "object",
@@ -128,8 +121,6 @@
       "description": "Update an existing object",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -167,8 +158,6 @@
       "description": "List all attributes for a specific object",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -183,8 +172,6 @@
       "description": "List all attributes for a specific object or list",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -203,8 +190,6 @@
       "description": "Create a new attribute on an object or list",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -256,8 +241,6 @@
       "description": "Get information about a specific attribute",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -280,8 +263,6 @@
       "description": "Update an existing attribute",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -324,8 +305,6 @@
       "description": "List all select options for a select attribute",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -348,8 +327,6 @@
       "description": "Create a new select option for a select attribute",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -388,8 +365,6 @@
       "description": "Update an existing select option",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -431,8 +406,6 @@
       "description": "List all statuses for a status attribute",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -455,8 +428,6 @@
       "description": "Create a new status for a status attribute",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -495,8 +466,6 @@
       "description": "Update an existing status",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "target": {
             "type": "string",
@@ -538,8 +507,6 @@
       "description": "Search for records in Attio CRM with advanced filtering and sorting options",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -594,8 +561,6 @@
       "description": "Get a specific record by ID with all its data",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -614,8 +579,6 @@
       "description": "Create a new record in Attio CRM",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -643,8 +606,6 @@
       "description": "Update an existing record in Attio CRM (appends to multiselect fields)",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -676,8 +637,6 @@
       "description": "Update an existing record in Attio CRM (overwrites multiselect fields)",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -709,8 +668,6 @@
       "description": "Create or update a record based on matching criteria (assert operation)",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -742,8 +699,6 @@
       "description": "Delete a record by ID",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -762,8 +717,6 @@
       "description": "Get all values for a specific attribute on a record",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -790,8 +743,6 @@
       "description": "List all list entries for a specific record",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "object": {
             "type": "string",
@@ -810,8 +761,6 @@
       "description": "Search for people in Attio CRM with filtering and sorting options",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "query": {
             "type": "object",
@@ -862,8 +811,6 @@
       "description": "Get a specific person by ID with all their data",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "person_id": {
             "type": "string",
@@ -878,8 +825,6 @@
       "description": "Search for companies in Attio CRM with advanced filtering and sorting options. Supports complex filters with $and/$or operators, field-specific sorting, and pagination.",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "query": {
             "type": "object",
@@ -935,8 +880,6 @@
       "description": "Get a specific company by ID with all its data including attributes, values, and metadata",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "company_id": {
             "type": "string",
@@ -952,8 +895,6 @@
       "description": "Create a new company in Attio CRM. Standard attributes include: domains, name, description, team, primary_location, categories, foundation_date, employee_range",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "data": {
             "type": "object",
@@ -977,8 +918,6 @@
       "description": "Update an existing company in Attio CRM. For multiselect attributes, values are appended to existing values",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "company_id": {
             "type": "string",
@@ -1007,8 +946,6 @@
       "description": "Create or update a company using a unique attribute for matching (default: domains). If company exists, it's updated; otherwise, it's created",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "data": {
             "type": "object",
@@ -1036,8 +973,6 @@
       "description": "Delete a company by ID. This action cannot be undone",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "company_id": {
             "type": "string",
@@ -1053,8 +988,6 @@
       "description": "Get all values for a specific attribute on a company record. Supports historic values and pagination. Cannot query historic values for COMINT/enriched attributes",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "company_id": {
             "type": "string",
@@ -1089,8 +1022,6 @@
       "description": "List all list entries across all lists where this company is the parent record. Useful for finding which lists contain this company",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "company_id": {
             "type": "string",
@@ -1117,8 +1048,6 @@
       "description": "Search for deals in Attio CRM with filtering and sorting options",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "query": {
             "type": "object",
@@ -1169,8 +1098,6 @@
       "description": "Get a specific deal by ID with all its data",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "deal_id": {
             "type": "string",
@@ -1185,8 +1112,6 @@
       "description": "Create a new deal in Attio CRM",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "data": {
             "type": "object",
@@ -1210,8 +1135,6 @@
       "description": "Update an existing deal in Attio CRM",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "deal_id": {
             "type": "string",
@@ -1239,8 +1162,6 @@
       "description": "Create or update a deal based on matching criteria (assert operation)",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "data": {
             "type": "object",
@@ -1268,8 +1189,6 @@
       "description": "Delete a deal by ID",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "deal_id": {
             "type": "string",
@@ -1284,8 +1203,6 @@
       "description": "Get all values for a specific attribute on a deal record",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "deal_id": {
             "type": "string",
@@ -1316,8 +1233,6 @@
       "description": "List all list entries for a specific deal record",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "deal_id": {
             "type": "string",
@@ -1340,8 +1255,8 @@
       "description": "Get all lists in the workspace",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "properties": {},
+        "required": []
       }
     },
     {
@@ -1349,8 +1264,6 @@
       "description": "Get details of a specific list",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "list": {
             "type": "string",
@@ -1365,8 +1278,6 @@
       "description": "Search entries in a specific list",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "list": {
             "type": "string",
@@ -1420,8 +1331,6 @@
       "description": "Get a specific list entry by ID",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "list": {
             "type": "string",
@@ -1440,8 +1349,6 @@
       "description": "Get all values for a specific attribute on a list entry",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "list": {
             "type": "string",
@@ -1468,8 +1375,6 @@
       "description": "List notes, optionally filtered by record",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "record_id": {
             "type": "string",
@@ -1495,8 +1400,6 @@
       "description": "Get a specific note by ID",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "note_id": {
             "type": "string",
@@ -1511,8 +1414,6 @@
       "description": "Create a new note for a record",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "record_id": {
             "type": "string",
@@ -1539,8 +1440,6 @@
       "description": "Delete a note by ID",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "note_id": {
             "type": "string",
@@ -1555,8 +1454,6 @@
       "description": "List comment threads, optionally filtered by record or entry",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "record_id": {
             "type": "string",
@@ -1586,8 +1483,6 @@
       "description": "Get all comments in a thread",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "thread_id": {
             "type": "string",
@@ -1602,8 +1497,6 @@
       "description": "Search for users in Attio CRM with filtering and sorting options",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "query": {
             "type": "object",
@@ -1654,8 +1547,6 @@
       "description": "Get a specific user by ID with all their data",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "user_id": {
             "type": "string",
@@ -1670,8 +1561,6 @@
       "description": "Search for workspaces in Attio CRM with filtering and sorting options",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "query": {
             "type": "object",
@@ -1722,8 +1611,6 @@
       "description": "Get a specific workspace by ID with all its data",
       "inputSchema": {
         "type": "object",
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "workspace_id": {
             "type": "string",

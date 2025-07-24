@@ -10,17 +10,11 @@ import {
 // WORKSPACE SCHEMAS
 // ===============================
 
-export const introspectWorkspaceSchema = {};
-
-export const getWorkspaceMembersSchema = {};
-
 export const getWorkspaceMemberSchema = {
   workspace_member_id: z
     .string()
     .describe("The ID of the workspace member to retrieve"),
 };
-
-export const getSelfSchema = {};
 
 // ===============================
 // WORKSPACE ACTIONS
@@ -116,11 +110,9 @@ export const workspaceToolDefinitions = {
   introspect_workspace: {
     description:
       "Get comprehensive information about the Attio workspace structure, including objects, attributes, lists, and current user permissions",
-    schema: introspectWorkspaceSchema,
   },
   get_workspace_members: {
     description: "List all workspace members and their details",
-    schema: getWorkspaceMembersSchema,
   },
   get_workspace_member: {
     description: "Get details of a specific workspace member",
@@ -128,7 +120,6 @@ export const workspaceToolDefinitions = {
   },
   get_self: {
     description: "Get information about the current API token and workspace",
-    schema: getSelfSchema,
   },
 };
 
