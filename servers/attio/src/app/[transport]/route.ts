@@ -18,8 +18,10 @@ const mcpHandler = createMcpHandler(
         throw new Error(`Tool definition not found for: ${name}`);
       }
 
+      // @ts-ignore
       const schema = toolDef.schema || null;
 
+      // @ts-ignore
       if (Object.keys(toolDef.schema || {}).length === 0) {
         // Tools with no arguments
         server.tool(name, toolDef.description, async (extra) => {
