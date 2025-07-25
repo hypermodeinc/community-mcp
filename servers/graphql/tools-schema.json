@@ -1,0 +1,98 @@
+{
+  "tools": [
+    {
+      "name": "graphql_introspect",
+      "description": "Introspect a GraphQL endpoint and return the complete schema in SDL (Schema Definition Language) format. This provides a human-readable schema that can be used with GraphQL tools, IDEs, and for understanding the complete API structure.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "GraphQL endpoint URL"
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "HTTP headers to include with requests"
+          },
+          "include_descriptions": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include field and type descriptions in the SDL output"
+          },
+          "sort_schema": {
+            "type": "boolean",
+            "default": true,
+            "description": "Sort the schema types alphabetically for better readability"
+          }
+        },
+        "required": ["endpoint"]
+      }
+    },
+    {
+      "name": "graphql_query",
+      "description": "Execute a GraphQL query against a specified endpoint with optional variables",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "GraphQL endpoint URL"
+          },
+          "query": {
+            "type": "string",
+            "description": "GraphQL query string"
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "Query variables as JSON object"
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "HTTP headers to include with requests"
+          }
+        },
+        "required": ["endpoint", "query"]
+      }
+    },
+    {
+      "name": "graphql_mutation",
+      "description": "Execute a GraphQL mutation against a specified endpoint with optional variables",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "description": "GraphQL endpoint URL"
+          },
+          "mutation": {
+            "type": "string",
+            "description": "GraphQL mutation string"
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "Mutation variables as JSON object"
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "HTTP headers to include with requests"
+          }
+        },
+        "required": ["endpoint", "mutation"]
+      }
+    }
+  ]
+}

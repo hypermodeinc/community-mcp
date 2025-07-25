@@ -13,6 +13,13 @@
     "test": "jest",
     "clean": "rm -rf dist"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "dependencies": {
     "zod": "^3.24.2"
   },
