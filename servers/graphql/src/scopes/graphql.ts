@@ -1,6 +1,13 @@
+// Updated servers/graphql/src/scopes/graphql.ts
 import { z } from "zod";
 import { McpResponse } from "@hypermode/mcp-shared";
 import { GraphQLClient } from "../lib/client";
+import {
+  getIntrospectionQuery,
+  buildClientSchema,
+  printSchema,
+  lexicographicSortSchema,
+} from "graphql";
 
 // ===============================
 // GRAPHQL SCHEMAS
@@ -12,6 +19,16 @@ export const introspectSchema = {
     .record(z.string())
     .optional()
     .describe("HTTP headers to include with requests"),
+  include_descriptions: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe("Include field and type descriptions in the SDL output"),
+  sort_schema: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe("Sort the schema types alphabetically for better readability"),
 };
 
 export const querySchema = {
@@ -47,13 +64,97 @@ export const mutationSchema = {
 export async function introspectGraphQL(args: {
   endpoint: string;
   headers?: Record<string, string>;
+  include_descriptions?: boolean;
+  sort_schema?: boolean;
 }): Promise<McpResponse> {
-  const client = new GraphQLClient({
-    endpoint: args.endpoint,
-    headers: args.headers,
-  });
+  try {
+    const client = new GraphQLClient({
+      endpoint: args.endpoint,
+      headers: args.headers,
+    });
 
-  return await client.introspect();
+    // Perform introspection
+    const response = await fetch(args.endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...args.headers,
+      },
+      body: JSON.stringify({
+        query: getIntrospectionQuery({
+          descriptions: args.include_descriptions ?? true,
+        }),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `GraphQL request failed: ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const result = await response.json();
+
+    if (result.errors) {
+      throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
+    }
+
+    // Build schema from introspection result
+    const schema = buildClientSchema(result.data);
+
+    // Sort schema if requested
+    const finalSchema = args.sort_schema
+      ? lexicographicSortSchema(schema)
+      : schema;
+
+    // Convert to SDL
+    const sdlSchema = printSchema(finalSchema);
+
+    // Count some basic stats for the summary
+    const lines = sdlSchema.split("\n");
+    const typeCount = (sdlSchema.match(/^type\s+/gm) || []).length;
+    const interfaceCount = (sdlSchema.match(/^interface\s+/gm) || []).length;
+    const enumCount = (sdlSchema.match(/^enum\s+/gm) || []).length;
+    const inputCount = (sdlSchema.match(/^input\s+/gm) || []).length;
+    const scalarCount = (sdlSchema.match(/^scalar\s+/gm) || []).length;
+
+    const summary = `GraphQL Schema (SDL) for ${args.endpoint}
+
+📊 Schema Statistics:
+• Types: ${typeCount}
+• Interfaces: ${interfaceCount}
+• Enums: ${enumCount}
+• Inputs: ${inputCount}
+• Custom Scalars: ${scalarCount}
+• Total Lines: ${lines.length}
+
+🔍 The complete SDL schema is provided below. You can:
+• Copy this schema to tools like GraphQL Playground
+• Use it to understand the complete API structure
+• Generate client code from this SDL
+• Import it into GraphQL IDEs for development
+
+Schema Definition Language (SDL):
+---`;
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `${summary}\n\n${sdlSchema}`,
+        },
+      ],
+    };
+  } catch (error) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Error performing introspection: ${error instanceof Error ? error.message : "Unknown error"}`,
+        },
+      ],
+    };
+  }
 }
 
 export async function executeGraphQLQuery(args: {
@@ -91,7 +192,7 @@ export async function executeGraphQLMutation(args: {
 export const graphqlToolDefinitions = {
   graphql_introspect: {
     description:
-      "Perform GraphQL introspection to discover the schema, types, queries, and mutations available on a GraphQL endpoint",
+      "Introspect a GraphQL endpoint and return the complete schema in SDL (Schema Definition Language) format. This provides a human-readable schema that can be used with GraphQL tools, IDEs, and for understanding the complete API structure.",
     schema: introspectSchema,
   },
   graphql_query: {
