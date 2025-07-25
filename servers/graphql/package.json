@@ -1,0 +1,56 @@
+{
+  "name": "@hypermode/graphql-mcp-server",
+  "version": "0.0.0-alpha.1",
+  "description": "Model Context Protocol server for GraphQL API integration",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "deploy": "vercel",
+    "deploy:prod": "vercel --prod",
+    "lint": "next lint",
+    "generate:schema": "npx tsx ./scripts/extract-tools-schema.ts > tools-schema.json"
+  },
+  "dependencies": {
+    "@hypermode/mcp-shared": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "@vercel/mcp-adapter": "0.11.1",
+    "graphql": "^16.8.1",
+    "next": "15.3.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^3.24.2",
+    "zod-to-json-schema": "^3.24.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^8",
+    "eslint-config-next": "^15.3.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vercel": "^40.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "graphql",
+    "api",
+    "hypermode",
+    "nextjs",
+    "vercel"
+  ],
+  "author": "Hypermode",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hypermodeinc/community-mcp.git",
+    "directory": "servers/graphql"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

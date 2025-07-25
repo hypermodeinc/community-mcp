@@ -1,0 +1,47 @@
+{
+  "name": "@hypermode/mcp-shared",
+  "version": "0.0.0-alpha.1",
+  "description": "Shared utilities for Hypermode MCP servers",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "lint": "eslint src/**/*.ts",
+    "test": "jest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^22.13.10",
+    "eslint": "^8",
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6",
+    "rollup": "^4.9.6",
+    "typescript": "^5.8.3",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "shared",
+    "utilities",
+    "hypermode"
+  ],
+  "author": "Hypermode",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hypermodeinc/community-mcp.git",
+    "directory": "packages/shared"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
