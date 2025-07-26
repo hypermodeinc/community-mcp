@@ -17,18 +17,48 @@ import {
 export class GraphQLClient {
   private config: GraphQLEndpointConfig;
   private schema: GraphQLSchema | null = null;
+  private authToken?: string;
 
-  constructor(config: GraphQLEndpointConfig) {
+  constructor(config: GraphQLEndpointConfig, authToken?: string) {
     this.config = config;
+    this.authToken = authToken;
   }
 
-  private async makeRequest(query: string, variables?: any): Promise<any> {
+  private buildHeaders(
+    customHeaders?: Record<string, string>,
+  ): Record<string, string> {
+    const baseHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    // Add auth token as Bearer if available
+    if (this.authToken) {
+      baseHeaders["Authorization"] = `Bearer ${this.authToken}`;
+    }
+
+    // Add config headers (these will override the auth token if Authorization is explicitly set)
+    if (this.config.headers) {
+      Object.assign(baseHeaders, this.config.headers);
+    }
+
+    // Add custom headers (these will override everything else)
+    if (customHeaders) {
+      Object.assign(baseHeaders, customHeaders);
+    }
+
+    return baseHeaders;
+  }
+
+  private async makeRequest(
+    query: string,
+    variables?: any,
+    customHeaders?: Record<string, string>,
+  ): Promise<any> {
+    const headers = this.buildHeaders(customHeaders);
+
     const response = await fetch(this.config.endpoint, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...this.config.headers,
-      },
+      headers,
       body: JSON.stringify({ query, variables }),
     });
 
@@ -50,12 +80,15 @@ export class GraphQLClient {
   async introspect(
     includeDescriptions: boolean = true,
     sortSchema: boolean = true,
+    customHeaders?: Record<string, string>,
   ): Promise<McpResponse> {
     try {
       const result = await this.makeRequest(
         getIntrospectionQuery({
           descriptions: includeDescriptions,
         }),
+        undefined,
+        customHeaders,
       );
 
       const schema = buildClientSchema(result.data);
@@ -105,7 +138,11 @@ ${sdlSchema}`;
     }
   }
 
-  async query(queryString: string, variables?: any): Promise<McpResponse> {
+  async query(
+    queryString: string,
+    variables?: any,
+    customHeaders?: Record<string, string>,
+  ): Promise<McpResponse> {
     try {
       const document = parse(queryString);
 
@@ -118,7 +155,11 @@ ${sdlSchema}`;
         }
       }
 
-      const result = await this.makeRequest(queryString, variables);
+      const result = await this.makeRequest(
+        queryString,
+        variables,
+        customHeaders,
+      );
 
       return createMcpResponse(
         result.data,
@@ -132,6 +173,7 @@ ${sdlSchema}`;
   async mutation(
     mutationString: string,
     variables?: any,
+    customHeaders?: Record<string, string>,
   ): Promise<McpResponse> {
     try {
       const document = parse(mutationString);
@@ -145,7 +187,11 @@ ${sdlSchema}`;
         }
       }
 
-      const result = await this.makeRequest(mutationString, variables);
+      const result = await this.makeRequest(
+        mutationString,
+        variables,
+        customHeaders,
+      );
 
       return createMcpResponse(
         result.data,

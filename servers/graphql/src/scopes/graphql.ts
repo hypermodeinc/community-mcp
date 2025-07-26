@@ -12,7 +12,9 @@ export const introspectSchema = {
   headers: z
     .record(z.string())
     .optional()
-    .describe("HTTP headers to include with requests"),
+    .describe(
+      "HTTP headers to include with requests (will override auth token if Authorization header is provided)",
+    ),
   include_descriptions: z
     .boolean()
     .optional()
@@ -35,7 +37,9 @@ export const querySchema = {
   headers: z
     .record(z.string())
     .optional()
-    .describe("HTTP headers to include with requests"),
+    .describe(
+      "HTTP headers to include with requests (will override auth token if Authorization header is provided)",
+    ),
 };
 
 export const mutationSchema = {
@@ -48,28 +52,37 @@ export const mutationSchema = {
   headers: z
     .record(z.string())
     .optional()
-    .describe("HTTP headers to include with requests"),
+    .describe(
+      "HTTP headers to include with requests (will override auth token if Authorization header is provided)",
+    ),
 };
 
 // ===============================
 // GRAPHQL ACTIONS
 // ===============================
 
-export async function introspectGraphQL(args: {
-  endpoint: string;
-  headers?: Record<string, string>;
-  include_descriptions?: boolean;
-  sort_schema?: boolean;
-}): Promise<McpResponse> {
+export async function introspectGraphQL(
+  args: {
+    endpoint: string;
+    headers?: Record<string, string>;
+    include_descriptions?: boolean;
+    sort_schema?: boolean;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const client = new GraphQLClient({
-      endpoint: args.endpoint,
-      headers: args.headers,
-    });
+    const client = new GraphQLClient(
+      {
+        endpoint: args.endpoint,
+        // Don't pass headers to config anymore since we handle them in the client
+      },
+      context?.authToken,
+    );
 
     return await client.introspect(
       args.include_descriptions ?? true,
       args.sort_schema ?? true,
+      args.headers, // Pass custom headers directly to the method
     );
   } catch (error) {
     return {
@@ -83,19 +96,24 @@ export async function introspectGraphQL(args: {
   }
 }
 
-export async function executeGraphQLQuery(args: {
-  endpoint: string;
-  query: string;
-  variables?: Record<string, unknown>;
-  headers?: Record<string, string>;
-}): Promise<McpResponse> {
+export async function executeGraphQLQuery(
+  args: {
+    endpoint: string;
+    query: string;
+    variables?: Record<string, unknown>;
+    headers?: Record<string, string>;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const client = new GraphQLClient({
-      endpoint: args.endpoint,
-      headers: args.headers,
-    });
+    const client = new GraphQLClient(
+      {
+        endpoint: args.endpoint,
+      },
+      context?.authToken,
+    );
 
-    return await client.query(args.query, args.variables);
+    return await client.query(args.query, args.variables, args.headers);
   } catch (error) {
     return {
       content: [
@@ -108,19 +126,24 @@ export async function executeGraphQLQuery(args: {
   }
 }
 
-export async function executeGraphQLMutation(args: {
-  endpoint: string;
-  mutation: string;
-  variables?: Record<string, unknown>;
-  headers?: Record<string, string>;
-}): Promise<McpResponse> {
+export async function executeGraphQLMutation(
+  args: {
+    endpoint: string;
+    mutation: string;
+    variables?: Record<string, unknown>;
+    headers?: Record<string, string>;
+  },
+  context?: { authToken?: string },
+): Promise<McpResponse> {
   try {
-    const client = new GraphQLClient({
-      endpoint: args.endpoint,
-      headers: args.headers,
-    });
+    const client = new GraphQLClient(
+      {
+        endpoint: args.endpoint,
+      },
+      context?.authToken,
+    );
 
-    return await client.mutation(args.mutation, args.variables);
+    return await client.mutation(args.mutation, args.variables, args.headers);
   } catch (error) {
     return {
       content: [
@@ -140,17 +163,17 @@ export async function executeGraphQLMutation(args: {
 export const graphqlToolDefinitions = {
   graphql_introspect: {
     description:
-      "Introspect a GraphQL endpoint and return the complete schema in SDL (Schema Definition Language) format. This provides a human-readable schema that can be used with GraphQL tools, IDEs, and for understanding the complete API structure.",
+      "Introspect a GraphQL endpoint and return the complete schema in SDL (Schema Definition Language) format. This provides a human-readable schema that can be used with GraphQL tools, IDEs, and for understanding the complete API structure. Uses auth token automatically if available.",
     schema: introspectSchema,
   },
   graphql_query: {
     description:
-      "Execute a GraphQL query against a specified endpoint with optional variables",
+      "Execute a GraphQL query against a specified endpoint with optional variables. Uses auth token automatically if available.",
     schema: querySchema,
   },
   graphql_mutation: {
     description:
-      "Execute a GraphQL mutation against a specified endpoint with optional variables",
+      "Execute a GraphQL mutation against a specified endpoint with optional variables. Uses auth token automatically if available.",
     schema: mutationSchema,
   },
 };
