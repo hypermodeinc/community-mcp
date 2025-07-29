@@ -1,0 +1,18 @@
+{
+  "tools": [
+    {
+      "name": "query",
+      "description": "Execute a SQL query on the MotherDuck database using DuckDB SQL dialect. Supports analytics queries, data exploration, aggregations, joins, and more.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "SQL query to execute using DuckDB SQL dialect"
+          }
+        },
+        "required": ["query"]
+      }
+    }
+  ]
+}

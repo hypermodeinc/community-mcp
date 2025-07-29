@@ -6,7 +6,9 @@
   "scripts": {
     "clean": "find . -type d \\( -name \"node_modules\" -o -name \"build\" -o -name \"dist\" \\) -exec rm -rf {} + && rm ./pnpm-lock.yaml",
     "build": "pnpm -r build",
-    "start:attio": "pnpm --filter @hypermode/attio-mcp-server start"
+    "start:attio": "pnpm --filter @hypermode/attio-mcp-server start",
+    "start:motherduck": "pnpm --filter @hypermode/motherduck-mcp-server start",
+    "start:graphql": "pnpm --filter @hypermode/graphql-mcp-server start"
   },
   "private": true,
   "homepage": "https://github.com/hypermodeinc/community-mcp#readme",
