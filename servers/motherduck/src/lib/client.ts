@@ -8,25 +8,26 @@ import {
 export class MotherDuckClient {
   private connectionString: string;
   private connection: DuckDBConnection | null = null;
+  private instance: DuckDBInstance | null = null;
 
   constructor(authToken?: string) {
     if (!authToken) {
-      throw new Error("MotherDuck token is required for authentication");
+      throw new Error("MotherDuck API token is required for authentication");
     }
 
-    // Use MotherDuck connection string with token
+    // ALWAYS use MotherDuck cloud connection string - never local
+    // The 'md:' prefix ensures we connect to MotherDuck's cloud API
     this.connectionString = `md:?motherduck_token=${authToken}`;
   }
 
   private async getConnection(): Promise<DuckDBConnection> {
     if (!this.connection) {
       try {
-        this.connection = await DuckDBConnection.create(
-          await DuckDBInstance.create(this.connectionString),
-        );
+        this.instance = await DuckDBInstance.create(this.connectionString);
+        this.connection = await this.instance.connect();
       } catch (error) {
         throw new Error(
-          `Failed to connect to MotherDuck: ${error instanceof Error ? error.message : "Unknown error"}`,
+          `Failed to connect to MotherDuck cloud API: ${error instanceof Error ? error.message : "Unknown error"}. Ensure your token is valid and you have internet connectivity.`,
         );
       }
     }
@@ -37,7 +38,6 @@ export class MotherDuckClient {
     try {
       const conn = await this.getConnection();
 
-      // Execute the query and get results
       const result = await conn.runAndReadAll(query);
 
       // Format the results for display
@@ -58,7 +58,7 @@ export class MotherDuckClient {
       if (rows.length === 0) {
         return createMcpResponse(
           { columns, rows: [], rowCount: 0 },
-          `Query executed successfully. No rows returned.\n\nColumns: ${columns.join(", ")}`,
+          `Query executed successfully via MotherDuck cloud API. No rows returned.\n\nColumns: ${columns.join(", ")}`,
         );
       }
 
@@ -67,10 +67,10 @@ export class MotherDuckClient {
 
       return createMcpResponse(
         { columns, rows, rowCount: rows.length },
-        `Query executed successfully. ${rows.length} row(s) returned.\n\n${tableOutput}`,
+        `Query executed successfully via MotherDuck cloud API. ${rows.length} row(s) returned.\n\n${tableOutput}`,
       );
     } catch (error) {
-      return createErrorResponse(error, "executing MotherDuck query");
+      return createErrorResponse(error, "executing MotherDuck cloud API query");
     }
   }
 
@@ -103,9 +103,18 @@ export class MotherDuckClient {
   }
 
   async close(): Promise<void> {
-    if (this.connection) {
-      await this.connection.closeSync();
-      this.connection = null;
+    try {
+      if (this.connection) {
+        await this.connection.closeSync();
+        this.connection = null;
+        console.log("Disconnected from MotherDuck cloud API");
+      }
+      if (this.instance) {
+        // Instance cleanup is handled automatically by the driver
+        this.instance = null;
+      }
+    } catch (error) {
+      console.warn("Warning during MotherDuck connection cleanup:", error);
     }
   }
 }
