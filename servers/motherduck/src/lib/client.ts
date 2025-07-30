@@ -25,6 +25,8 @@ export class MotherDuckClient {
       try {
         this.instance = await DuckDBInstance.create(this.connectionString);
         this.connection = await this.instance.connect();
+        // Set home directory to /tmp to avoid issues with serverless environments
+        await this.connection.run("SET home_directory='/tmp';");
       } catch (error) {
         throw new Error(
           `Failed to connect to MotherDuck cloud API: ${error instanceof Error ? error.message : "Unknown error"}. Ensure your token is valid and you have internet connectivity.`,
