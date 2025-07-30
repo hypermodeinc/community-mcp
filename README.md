@@ -68,7 +68,6 @@ A powerful MCP server for MotherDuck cloud analytics database integration, provi
 All servers follow a consistent, modern architecture:
 
 - **Next.js Framework**: Serverless-ready with optimal performance
-- **Vercel Deployment**: Production-ready hosting with global CDN
 - **TypeScript**: Full type safety and excellent developer experience
 - **MCP Protocol**: Standards-compliant Model Context Protocol implementation
 - **Bearer Token Authentication**: Secure, stateless authentication
