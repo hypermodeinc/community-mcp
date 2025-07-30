@@ -17,7 +17,7 @@ export class MotherDuckClient {
 
     // ALWAYS use MotherDuck cloud connection string - never local
     // The 'md:' prefix ensures we connect to MotherDuck's cloud API
-    this.connectionString = `md:?motherduck_token=${authToken}`;
+    this.connectionString = `md:?motherduck_token=${authToken}&saas_mode=true`;
   }
 
   private async getConnection(): Promise<DuckDBConnection> {
@@ -25,8 +25,6 @@ export class MotherDuckClient {
       try {
         this.instance = await DuckDBInstance.create(this.connectionString);
         this.connection = await this.instance.connect();
-        // Set home directory to /tmp to avoid issues with serverless environments
-        await this.connection.run("SET home_directory='/tmp';");
       } catch (error) {
         throw new Error(
           `Failed to connect to MotherDuck cloud API: ${error instanceof Error ? error.message : "Unknown error"}. Ensure your token is valid and you have internet connectivity.`,
