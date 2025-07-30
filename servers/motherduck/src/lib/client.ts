@@ -6,9 +6,7 @@ import {
 } from "@hypermode/mcp-shared";
 import { tmpdir } from "os";
 
-if (!process.env.HOME) {
-  process.env.HOME = "/tmp";
-}
+
 
 export class MotherDuckClient {
   private connectionString: string;
@@ -25,6 +23,9 @@ export class MotherDuckClient {
   private async getConnection(): Promise<DuckDBConnection> {
     if (!this.connection) {
       try {
+        if (!process.env.HOME) {
+          process.env.HOME = "/tmp";
+        }
         this.instance = await DuckDBInstance.create(this.connectionString);
         this.connection = await this.instance.connect();
 
