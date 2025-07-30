@@ -17,7 +17,7 @@ Add this to your MCP client configuration to start using the hosted server:
         "--oauth2Bearer",
         "YOUR_API_KEY",
         "--streamableHttp",
-        "https://community-mcp-attio.vercel.app/mcp"
+        "http://localhost:3000/mcp"
       ]
     }
   }
@@ -166,10 +166,6 @@ To request access to the hosted MCP server:
 
 ## Setup
 
-### Cloud Deployment
-
-The server is deployed at `https://community-mcp-attio.vercel.app` and ready for immediate use.
-
 **MCP Configuration**:
 
 ```json
@@ -183,7 +179,7 @@ The server is deployed at `https://community-mcp-attio.vercel.app` and ready for
         "--oauth2Bearer",
         "YOUR_API_KEY",
         "--streamableHttp",
-        "https://community-mcp-attio.vercel.app/mcp"
+        "http://localhost:3000/mcp"
       ]
     }
   }

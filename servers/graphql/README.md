@@ -17,7 +17,7 @@ Add this to your MCP client configuration to start using the hosted server:
         "--oauth2Bearer",
         "YOUR_AUTH_KEY",
         "--streamableHttp",
-        "https://community-mcp-graphql.vercel.app/mcp"
+        "http://localhost:3000/mcp"
       ]
     }
   }
@@ -123,10 +123,6 @@ To request access to the hosted MCP server:
 
 ## Setup
 
-### Cloud Deployment
-
-The server is deployed at `https://community-mcp-graphql.vercel.app` and ready for immediate use.
-
 **MCP Configuration**:
 
 ```json
@@ -140,7 +136,7 @@ The server is deployed at `https://community-mcp-graphql.vercel.app` and ready f
         "--oauth2Bearer",
         "YOUR_AUTH_KEY",
         "--streamableHttp",
-        "https://community-mcp-graphql.vercel.app/mcp"
+        "http://localhost:3000/mcp"
       ]
     }
   }

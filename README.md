@@ -1,6 +1,6 @@
 # Hypermode Community MCP Servers
 
-A curated collection of Model Context Protocol (MCP) servers designed for integration with conversational agents. This repository provides production-ready MCP servers that extend the capabilities of AI assistants with external service integrations.
+A curated collection of Model Context Protocol (MCP) servers designed for integration with conversational agents. This repository provides MCP servers that extend the capabilities of AI assistants with external service integrations.
 
 ## Available Servers
 
@@ -9,8 +9,6 @@ A curated collection of Model Context Protocol (MCP) servers designed for integr
 A comprehensive MCP server for Attio CRM integration, providing full CRUD operations for CRM data management.
 
 **Location**: `servers/attio/`
-
-**Deployment**: `https://community-mcp-attio.vercel.app`
 
 **Features**:
 
@@ -29,8 +27,6 @@ A versatile MCP server for GraphQL API integration, enabling schema introspectio
 
 **Location**: `servers/graphql/`
 
-**Deployment**: `https://community-mcp-graphql.vercel.app`
-
 **Features**:
 
 - GraphQL schema introspection and discovery
@@ -47,8 +43,6 @@ A versatile MCP server for GraphQL API integration, enabling schema introspectio
 A powerful MCP server for MotherDuck cloud analytics database integration, providing SQL analytics capabilities for data exploration and analysis.
 
 **Location**: `servers/motherduck/`
-
-**Deployment**: `https://community-mcp-motherduck.vercel.app`
 
 **Features**:
 
@@ -132,5 +126,3 @@ Refer to individual server documentation for complete setup guides, authenticati
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-
-**Production Deployments**: All servers are production-ready and hosted on Vercel for immediate use. Check individual server documentation for integration instructions.

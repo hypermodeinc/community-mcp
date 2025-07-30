@@ -17,7 +17,7 @@ Add this to your MCP client configuration to start using the hosted server:
         "--oauth2Bearer",
         "YOUR_MOTHERDUCK_TOKEN",
         "--streamableHttp",
-        "https://community-mcp-motherduck.vercel.app/mcp"
+        "http://localhost:3000/mcp"
       ]
     }
   }
@@ -57,10 +57,6 @@ Add this to your MCP client configuration to start using the hosted server:
 
 ## Setup
 
-### Cloud Deployment
-
-The server is deployed at `https://community-mcp-motherduck.vercel.app` and ready for immediate use.
-
 **MCP Configuration**:
 
 ```json
@@ -74,7 +70,7 @@ The server is deployed at `https://community-mcp-motherduck.vercel.app` and read
         "--oauth2Bearer",
         "YOUR_MOTHERDUCK_TOKEN",
         "--streamableHttp",
-        "https://community-mcp-motherduck.vercel.app/mcp"
+        "http://localhost:3000/mcp"
       ]
     }
   }
