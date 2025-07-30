@@ -11,6 +11,8 @@ const nextConfig = {
   ],
   env: {
     AUTH_KEY: process.env.AUTH_KEY,
+    TMPDIR: process.env.TMPDIR || "/tmp",
+    HOME: process.env.HOME || "/tmp",
   },
   publicRuntimeConfig: {},
   serverRuntimeConfig: {
@@ -46,6 +48,14 @@ const nextConfig = {
           },
         ],
       });
+
+      // For server-side, disable problematic fallbacks
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        os: false,
+      };
     }
 
     return config;

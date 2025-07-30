@@ -4,6 +4,7 @@ import {
   createErrorResponse,
   McpResponse,
 } from "@hypermode/mcp-shared";
+import { tmpdir } from "os";
 
 export class MotherDuckClient {
   private connectionString: string;
@@ -14,9 +15,6 @@ export class MotherDuckClient {
     if (!authToken) {
       throw new Error("MotherDuck API token is required for authentication");
     }
-
-    // ALWAYS use MotherDuck cloud connection string - never local
-    // The 'md:' prefix ensures we connect to MotherDuck's cloud API
     this.connectionString = `md:?motherduck_token=${authToken}&saas_mode=true`;
   }
 
@@ -25,6 +23,14 @@ export class MotherDuckClient {
       try {
         this.instance = await DuckDBInstance.create(this.connectionString);
         this.connection = await this.instance.connect();
+
+        try {
+          const homeDir = tmpdir();
+          await this.connection.runAndReadAll(`SET home_directory='${homeDir}'`);
+        } catch (homeDirError) {
+          console.warn("Could not set home directory:", homeDirError);
+        }
+
       } catch (error) {
         throw new Error(
           `Failed to connect to MotherDuck cloud API: ${error instanceof Error ? error.message : "Unknown error"}. Ensure your token is valid and you have internet connectivity.`,
@@ -40,11 +46,9 @@ export class MotherDuckClient {
 
       const result = await conn.runAndReadAll(query);
 
-      // Format the results for display
       const columns = result.columnNames();
       const rows = [];
 
-      // Convert results to readable format
       for (let i = 0; i < result.currentRowCount; i++) {
         const row: Record<string, any> = {};
         for (let j = 0; j < columns.length; j++) {
@@ -54,7 +58,6 @@ export class MotherDuckClient {
         rows.push(row);
       }
 
-      // Create a formatted table output
       if (rows.length === 0) {
         return createMcpResponse(
           { columns, rows: [], rowCount: 0 },
@@ -62,7 +65,6 @@ export class MotherDuckClient {
         );
       }
 
-      // Create a simple table format
       const tableOutput = this.formatAsTable(columns, rows);
 
       return createMcpResponse(
@@ -80,7 +82,6 @@ export class MotherDuckClient {
   ): string {
     if (rows.length === 0) return "No data";
 
-    // Calculate column widths
     const widths = columns.map((col) => {
       const maxDataWidth = Math.max(
         ...rows.map((row) => String(row[col] ?? "").length),
@@ -88,11 +89,9 @@ export class MotherDuckClient {
       return Math.max(col.length, maxDataWidth, 3);
     });
 
-    // Create header
     const header = columns.map((col, i) => col.padEnd(widths[i])).join(" | ");
     const separator = widths.map((w) => "-".repeat(w)).join(" | ");
 
-    // Create data rows
     const dataRows = rows.map((row) =>
       columns
         .map((col, i) => String(row[col] ?? "").padEnd(widths[i]))
@@ -110,7 +109,6 @@ export class MotherDuckClient {
         console.log("Disconnected from MotherDuck cloud API");
       }
       if (this.instance) {
-        // Instance cleanup is handled automatically by the driver
         this.instance = null;
       }
     } catch (error) {
