@@ -6,6 +6,10 @@ import {
 } from "@hypermode/mcp-shared";
 import { tmpdir } from "os";
 
+if (!process.env.HOME) {
+  process.env.HOME = "/tmp";
+}
+
 export class MotherDuckClient {
   private connectionString: string;
   private connection: DuckDBConnection | null = null;
@@ -26,11 +30,12 @@ export class MotherDuckClient {
 
         try {
           const homeDir = tmpdir();
-          await this.connection.runAndReadAll(`SET home_directory='${homeDir}'`);
+          await this.connection.runAndReadAll(
+            `SET home_directory='${homeDir}'`,
+          );
         } catch (homeDirError) {
           console.warn("Could not set home directory:", homeDirError);
         }
-
       } catch (error) {
         throw new Error(
           `Failed to connect to MotherDuck cloud API: ${error instanceof Error ? error.message : "Unknown error"}. Ensure your token is valid and you have internet connectivity.`,
