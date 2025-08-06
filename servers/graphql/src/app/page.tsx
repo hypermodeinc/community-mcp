@@ -14,6 +14,9 @@ export default function Home() {
             <strong>MCP Endpoints:</strong>
           </div>
           <div className="text-sm text-gray-500">• /mcp (Streamable HTTP)</div>
+          <div className="text-sm text-gray-500">
+            • /tools (Tools Introspection)
+          </div>
         </div>
         <div className="mt-6 space-y-2">
           <h2 className="text-lg font-semibold text-gray-700">
@@ -24,6 +27,25 @@ export default function Home() {
             <li>• Query execution with validation</li>
             <li>• Mutation execution with validation</li>
           </ul>
+        </div>
+        <div className="mt-6 space-y-2">
+          <h2 className="text-lg font-semibold text-gray-700">Usage:</h2>
+          <div className="text-sm text-gray-600 space-y-1">
+            <div>
+              <strong>Headers Required:</strong>
+            </div>
+            <div>• X-GraphQL-URL: Your GraphQL endpoint</div>
+            <div>• Authorization: Bearer token (optional)</div>
+          </div>
+        </div>
+        <div className="mt-6 space-y-2">
+          <h2 className="text-lg font-semibold text-gray-700">Quick Start:</h2>
+          <div className="text-sm text-gray-600">
+            <div>
+              GET <code className="bg-gray-100 px-1 rounded">/tools</code> -
+              View available tools
+            </div>
+          </div>
         </div>
         <div className="mt-6">
           <a

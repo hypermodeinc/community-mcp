@@ -26,6 +26,45 @@ Add this to your MCP client configuration to start using the hosted server:
 
 **Note**: Replace `YOUR_AUTH_KEY` with an auth key from the maintainers. See [Getting API Access](#getting-api-access) below.
 
+## Endpoints
+
+- **MCP Endpoint**: `/mcp` - Main MCP protocol endpoint
+- **Tools Introspection**: `/tools` - GET endpoint to discover available tools and their schemas
+
+## New Header-Based Approach
+
+The GraphQL endpoint URL is now passed via headers instead of as a parameter in each tool call:
+
+### Required Headers
+
+- `X-GraphQL-URL`: The GraphQL endpoint URL (required for all operations)
+- `Authorization`: Bearer token for GraphQL endpoint authentication (optional)
+
+### Example Usage
+
+```bash
+# Introspect tools
+curl -X GET http://localhost:3000/tools
+
+# Example MCP request with headers
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -H "X-GraphQL-URL: https://api.github.com/graphql" \
+  -H "Authorization: Bearer your_github_token" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "graphql_introspect",
+      "arguments": {
+        "include_descriptions": true,
+        "sort_schema": true
+      }
+    }
+  }'
+```
+
 ## Features
 
 - **Schema Introspection**: Discover available types, queries, and mutations from any GraphQL endpoint
@@ -34,6 +73,7 @@ Add this to your MCP client configuration to start using the hosted server:
 - **Authentication Support**: Flexible header-based authentication for protected endpoints
 - **Validation**: Built-in query and mutation validation using graphql-js
 - **Error Handling**: Comprehensive error reporting for debugging
+- **Tools Discovery**: `/tools` endpoint for runtime tool introspection
 
 ## Available Tools
 
@@ -49,19 +89,30 @@ Add this to your MCP client configuration to start using the hosted server:
 
 Discovers the schema structure of a GraphQL endpoint, including all available types, queries, mutations, and their documentation.
 
+**Headers Required:**
+
+- `X-GraphQL-URL`: GraphQL endpoint URL
+- `Authorization`: Bearer token (optional)
+
 **Parameters:**
 
-- `endpoint` (required): GraphQL endpoint URL
-- `headers` (optional): HTTP headers for authentication
+- `headers` (optional): Additional HTTP headers for authentication
+- `include_descriptions` (optional, default: true): Include field descriptions
+- `sort_schema` (optional, default: true): Sort schema alphabetically
 
 **Example:**
 
 ```typescript
+// Headers
 {
-  "endpoint": "https://api.github.com/graphql",
-  "headers": {
-    "Authorization": "Bearer your_github_token"
-  }
+  "X-GraphQL-URL": "https://api.github.com/graphql",
+  "Authorization": "Bearer your_github_token"
+}
+
+// Tool parameters
+{
+  "include_descriptions": true,
+  "sort_schema": true
 }
 ```
 
@@ -69,23 +120,30 @@ Discovers the schema structure of a GraphQL endpoint, including all available ty
 
 Executes a GraphQL query against the specified endpoint with automatic validation.
 
+**Headers Required:**
+
+- `X-GraphQL-URL`: GraphQL endpoint URL
+- `Authorization`: Bearer token (optional)
+
 **Parameters:**
 
-- `endpoint` (required): GraphQL endpoint URL
 - `query` (required): GraphQL query string
 - `variables` (optional): Query variables as JSON object
-- `headers` (optional): HTTP headers for authentication
+- `headers` (optional): Additional HTTP headers
 
 **Example:**
 
 ```typescript
+// Headers
 {
-  "endpoint": "https://api.github.com/graphql",
+  "X-GraphQL-URL": "https://api.github.com/graphql",
+  "Authorization": "Bearer your_github_token"
+}
+
+// Tool parameters
+{
   "query": "query GetUser($login: String!) { user(login: $login) { name bio company } }",
-  "variables": { "login": "octocat" },
-  "headers": {
-    "Authorization": "Bearer your_github_token"
-  }
+  "variables": { "login": "octocat" }
 }
 ```
 
@@ -93,22 +151,67 @@ Executes a GraphQL query against the specified endpoint with automatic validatio
 
 Executes a GraphQL mutation against the specified endpoint with automatic validation.
 
+**Headers Required:**
+
+- `X-GraphQL-URL`: GraphQL endpoint URL
+- `Authorization`: Bearer token (optional)
+
 **Parameters:**
 
-- `endpoint` (required): GraphQL endpoint URL
 - `mutation` (required): GraphQL mutation string
 - `variables` (optional): Mutation variables as JSON object
-- `headers` (optional): HTTP headers for authentication
+- `headers` (optional): Additional HTTP headers
 
 **Example:**
 
 ```typescript
+// Headers
 {
-  "endpoint": "https://api.github.com/graphql",
+  "X-GraphQL-URL": "https://api.github.com/graphql",
+  "Authorization": "Bearer your_github_token"
+}
+
+// Tool parameters
+{
   "mutation": "mutation UpdateProfile($bio: String!) { updateUserProfile(input: { bio: $bio }) { user { bio } } }",
-  "variables": { "bio": "Updated bio from MCP" },
-  "headers": {
-    "Authorization": "Bearer your_github_token"
+  "variables": { "bio": "Updated bio from MCP" }
+}
+```
+
+## Tools Discovery
+
+You can introspect available tools using the `/tools` endpoint:
+
+```bash
+curl -X GET http://localhost:3000/tools
+```
+
+Response format:
+
+```json
+{
+  "tools": [
+    {
+      "name": "graphql_introspect",
+      "description": "Introspect a GraphQL endpoint...",
+      "inputSchema": {
+        "type": "object",
+        "properties": { ... },
+        "required": [ ... ]
+      }
+    }
+  ],
+  "metadata": {
+    "totalTools": 3,
+    "serverType": "GraphQL MCP Server",
+    "version": "0.0.0-alpha.1",
+    "usage": {
+      "note": "Set GraphQL endpoint URL in 'X-GraphQL-URL' header when making requests",
+      "headers": {
+        "X-GraphQL-URL": "Your GraphQL endpoint URL (required)",
+        "Authorization": "Bearer your_auth_token (optional for GraphQL endpoint auth)"
+      }
+    }
   }
 }
 ```
@@ -171,7 +274,13 @@ To request access to the hosted MCP server:
    pnpm dev
    ```
 
-4. **MCP Configuration for Local**:
+4. **Test Tools Endpoint**:
+
+   ```bash
+   curl -X GET http://localhost:3000/tools
+   ```
+
+5. **MCP Configuration for Local**:
    ```json
    {
      "mcpServers": {
@@ -198,6 +307,8 @@ To request access to the hosted MCP server:
 
 **Assistant**: I'll introspect the GitHub GraphQL API to discover its schema structure.
 
+_Note: The GraphQL endpoint URL (https://api.github.com/graphql) is now passed via the X-GraphQL-URL header_
+
 ```text
 Using graphql_introspect to examine the GitHub API...
 
@@ -220,104 +331,20 @@ Key Mutation Types Available:
 The API supports comprehensive GitHub operations including repositories, issues, pull requests, users, organizations, and more.
 ```
 
-**User**: "Get information about the octocat user"
-
-**Assistant**: I'll query the GitHub API to get information about the octocat user.
-
-```text
-Using graphql_query to fetch user information...
-
-Query:
-query GetUser($login: String!) {
-  user(login: $login) {
-    name
-    bio
-    company
-    location
-    email
-    websiteUrl
-    twitterUsername
-    followers {
-      totalCount
-    }
-    following {
-      totalCount
-    }
-    repositories(first: 5, orderBy: {field: STARGAZERS, direction: DESC}) {
-      nodes {
-        name
-        description
-        stargazerCount
-      }
-    }
-  }
-}
-
-Results:
-- Name: The Octocat
-- Bio: GitHub's mascot and Git guru
-- Company: @github
-- Location: San Francisco
-- Followers: 4,892
-- Following: 9
-- Top Repositories:
-  * Hello-World: My first repository on GitHub! (2,034 stars)
-  * Spoon-Knife: This repo is for demonstration purposes only (1,234 stars)
-```
-
-### API Mutation Example
-
-**User**: "Create a new issue in my test repository"
-
-**Assistant**: I'll help you create a new issue in your repository using a GraphQL mutation.
-
-```text
-Using graphql_mutation to create a new issue...
-
-Mutation:
-mutation CreateIssue($repositoryId: ID!, $title: String!, $body: String) {
-  createIssue(input: {
-    repositoryId: $repositoryId
-    title: $title
-    body: $body
-  }) {
-    issue {
-      id
-      number
-      title
-      url
-      state
-    }
-  }
-}
-
-Variables:
-- repositoryId: "R_kgDOGBJWKw"
-- title: "New feature request"
-- body: "This issue was created via GraphQL MCP server"
-
-Results:
-Successfully created issue #42:
-- Title: New feature request
-- URL: https://github.com/username/test-repo/issues/42
-- State: OPEN
-- ID: I_kwDOGBJWK85HqR9K
-```
-
 ## Authentication
 
-The GraphQL MCP server uses a simple auth key system for MCP authentication, while GraphQL endpoint authentication is handled through HTTP headers:
+The GraphQL MCP server uses a two-layer authentication approach:
 
 ### MCP Server Authentication
 
 - **Auth Key**: Required for accessing the MCP server itself
-- Set via `AUTH_KEY` environment variable or passed as bearer token
+- Set via `AUTH_KEY` environment variable or passed as bearer token to MCP endpoint
 
 ### GraphQL Endpoint Authentication
 
-- **Bearer Token**: `"Authorization": "Bearer YOUR_TOKEN"`
-- **API Key**: `"X-API-Key": "YOUR_API_KEY"`
-- **Custom Headers**: Any custom authentication headers required by your GraphQL endpoint
+- **Headers**: Set via `X-GraphQL-URL` and `Authorization` headers
+- **Bearer Token**: `Authorization: Bearer YOUR_TOKEN`
+- **API Key**: Custom headers as needed by your GraphQL endpoint
 
 ## Common GraphQL Endpoints
 
@@ -325,50 +352,40 @@ Here are some popular GraphQL endpoints you can explore:
 
 ### GitHub API
 
-```json
-{
-  "endpoint": "https://api.github.com/graphql",
-  "headers": {
-    "Authorization": "Bearer your_github_personal_access_token"
-  }
-}
+```bash
+# Headers
+X-GraphQL-URL: https://api.github.com/graphql
+Authorization: Bearer your_github_personal_access_token
 ```
 
 ### Shopify Storefront API
 
-```json
-{
-  "endpoint": "https://your-shop.myshopify.com/api/2023-10/graphql",
-  "headers": {
-    "X-Shopify-Storefront-Access-Token": "your_storefront_access_token"
-  }
-}
+```bash
+# Headers
+X-GraphQL-URL: https://your-shop.myshopify.com/api/2023-10/graphql
+X-Shopify-Storefront-Access-Token: your_storefront_access_token
 ```
 
 ### Contentful
 
-```json
-{
-  "endpoint": "https://graphql.contentful.com/content/v1/spaces/your_space_id",
-  "headers": {
-    "Authorization": "Bearer your_contentful_access_token"
-  }
-}
+```bash
+# Headers
+X-GraphQL-URL: https://graphql.contentful.com/content/v1/spaces/your_space_id
+Authorization: Bearer your_contentful_access_token
 ```
 
 ### GraphQL Playground Examples
 
-```json
-{
-  "endpoint": "https://graphql-pokemon2.vercel.app/",
-  "headers": {}
-}
+```bash
+# Headers
+X-GraphQL-URL: https://graphql-pokemon2.vercel.app/
 ```
 
 ## Error Handling
 
 The server provides comprehensive error handling:
 
+- **Missing GraphQL URL**: Clear error when `X-GraphQL-URL` header is not provided
 - **Syntax Errors**: Malformed GraphQL queries are caught and reported
 - **Validation Errors**: Schema validation failures are detailed
 - **Network Errors**: Connection issues are handled gracefully
@@ -381,6 +398,7 @@ The server provides comprehensive error handling:
 - **Request Validation**: All GraphQL operations are validated before execution
 - **Error Sanitization**: Sensitive information is not exposed in error messages
 - **HTTPS Only**: All communications use secure HTTPS connections
+- **Header-based URLs**: GraphQL endpoints passed via headers for better security isolation
 
 ## Limitations
 
