@@ -8,11 +8,6 @@ import {
   printSchema,
   lexicographicSortSchema,
 } from "graphql";
-import {
-  createMcpResponse,
-  createErrorResponse,
-  McpResponse,
-} from "@hypermode/mcp-shared";
 
 export class GraphQLClient {
   private config: GraphQLEndpointConfig;
@@ -81,7 +76,7 @@ export class GraphQLClient {
     includeDescriptions: boolean = true,
     sortSchema: boolean = true,
     customHeaders?: Record<string, string>,
-  ): Promise<McpResponse> {
+  ) {
     try {
       const result = await this.makeRequest(
         getIntrospectionQuery({
@@ -95,7 +90,6 @@ export class GraphQLClient {
       this.schema = schema;
 
       const finalSchema = sortSchema ? lexicographicSortSchema(schema) : schema;
-
       const sdlSchema = printSchema(finalSchema);
 
       const typeCount = (sdlSchema.match(/^type\s+/gm) || []).length;
@@ -134,7 +128,14 @@ ${sdlSchema}`;
         ],
       };
     } catch (error) {
-      return createErrorResponse(error, "performing introspection");
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error performing introspection: ${error instanceof Error ? error.message : "Unknown error"}`,
+          },
+        ],
+      };
     }
   }
 
@@ -142,7 +143,7 @@ ${sdlSchema}`;
     queryString: string,
     variables?: any,
     customHeaders?: Record<string, string>,
-  ): Promise<McpResponse> {
+  ) {
     try {
       const document = parse(queryString);
 
@@ -161,12 +162,23 @@ ${sdlSchema}`;
         customHeaders,
       );
 
-      return createMcpResponse(
-        result.data,
-        `GraphQL query executed successfully:\n\n${JSON.stringify(result.data, null, 2)}`,
-      );
+      return {
+        content: [
+          {
+            type: "text",
+            text: `GraphQL query executed successfully:\n\n${JSON.stringify(result.data, null, 2)}`,
+          },
+        ],
+      };
     } catch (error) {
-      return createErrorResponse(error, "executing query");
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error executing query: ${error instanceof Error ? error.message : "Unknown error"}`,
+          },
+        ],
+      };
     }
   }
 
@@ -174,7 +186,7 @@ ${sdlSchema}`;
     mutationString: string,
     variables?: any,
     customHeaders?: Record<string, string>,
-  ): Promise<McpResponse> {
+  ) {
     try {
       const document = parse(mutationString);
 
@@ -193,12 +205,23 @@ ${sdlSchema}`;
         customHeaders,
       );
 
-      return createMcpResponse(
-        result.data,
-        `GraphQL mutation executed successfully:\n\n${JSON.stringify(result.data, null, 2)}`,
-      );
+      return {
+        content: [
+          {
+            type: "text",
+            text: `GraphQL mutation executed successfully:\n\n${JSON.stringify(result.data, null, 2)}`,
+          },
+        ],
+      };
     } catch (error) {
-      return createErrorResponse(error, "executing mutation");
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error executing mutation: ${error instanceof Error ? error.message : "Unknown error"}`,
+          },
+        ],
+      };
     }
   }
 }

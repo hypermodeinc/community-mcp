@@ -1,6 +1,5 @@
 import { createMcpHandler, withMcpAuth } from "mcp-handler";
 import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
-import { formatMcpResponse } from "@hypermode/mcp-shared";
 import { allActions, allToolDefinitions } from "@/src/scopes";
 import { createHash } from "crypto";
 
@@ -49,7 +48,10 @@ const handler = createMcpHandler(
         try {
           const safeArgs = args === undefined ? {} : args;
           const response = await action(safeArgs, extra);
-          return formatMcpResponse(response);
+
+          // Return the standard MCP response format
+          // The response should already be in { content: [...] } format
+          return response;
         } catch (error) {
           console.error(`Error in ${name}:`, error);
           return {
