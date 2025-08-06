@@ -1,20 +1,39 @@
-import {
-  createMcpHandler,
-  experimental_withMcpAuth as withMcpAuth,
-} from "@vercel/mcp-adapter";
-import { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
+import { createMcpHandler, withMcpAuth } from "mcp-handler";
+import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
 import { formatMcpResponse } from "@hypermode/mcp-shared";
 import { allActions, allToolDefinitions } from "@/src/scopes";
-import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "crypto";
 
-const mcpHandler = createMcpHandler(
-  async (server) => {
+const verifyToken = async (
+  req: Request,
+  bearerToken?: string,
+): Promise<AuthInfo | undefined> => {
+  if (!bearerToken) return undefined;
+
+  if (bearerToken.trim().length === 0) return undefined;
+
+  // Create a simple client ID from token hash for identification
+  const tokenHash = createHash("sha256")
+    .update(bearerToken)
+    .digest("hex")
+    .slice(0, 12);
+  const clientId = `graphql-user-${tokenHash}`;
+
+  return {
+    token: bearerToken,
+    scopes: ["graphql:query", "graphql:mutation", "graphql:introspect"],
+    clientId: clientId,
+    extra: {
+      graphqlToken: bearerToken,
+    },
+  };
+};
+
+const handler = createMcpHandler(
+  (server) => {
     const registerTool = (
       name: string,
-      action: (
-        args: any,
-        context?: { authToken?: string; graphqlUrl?: string },
-      ) => Promise<any>,
+      action: (args: any, extra?: any) => Promise<any>,
     ) => {
       const toolDef =
         allToolDefinitions[name as keyof typeof allToolDefinitions];
@@ -29,14 +48,7 @@ const mcpHandler = createMcpHandler(
       server.tool(name, toolDef.description, schema, async (args, extra) => {
         try {
           const safeArgs = args === undefined ? {} : args;
-          // Extract GraphQL URL from headers
-          const graphqlUrl =
-            extra.request?.headers?.["x-graphql-url"] ||
-            extra.request?.headers?.["X-GraphQL-URL"];
-          const response = await action(safeArgs, {
-            authToken: extra.authInfo?.token,
-            graphqlUrl,
-          });
+          const response = await action(safeArgs, extra);
           return formatMcpResponse(response);
         } catch (error) {
           console.error(`Error in ${name}:`, error);
@@ -61,6 +73,7 @@ const mcpHandler = createMcpHandler(
     });
   },
   {
+    // Optional server options
     capabilities: {
       tools: Object.fromEntries(
         Object.entries(allToolDefinitions).map(([name, def]) => [
@@ -68,130 +81,20 @@ const mcpHandler = createMcpHandler(
           { description: def.description },
         ]),
       ),
-      auth: {
-        type: "bearer",
-        required: true,
-      },
     },
   },
   {
-    basePath: "",
-    verboseLogs: true,
+    basePath: "", // Empty since route is at app/[transport], not app/api/[transport]
     maxDuration: 60,
-    disableSse: true,
+    verboseLogs: true,
+    disableSse: true, // Disable SSE for this handler
   },
 );
 
-const verifyToken = async (
-  req: Request,
-  bearerToken?: string,
-): Promise<AuthInfo | undefined> => {
-  if (!bearerToken) return undefined;
+// Wrap handler with authentication
+const authHandler = withMcpAuth(handler, verifyToken, {
+  required: false, // Allow both authenticated and unauthenticated access
+  requiredScopes: [], // No specific scopes required
+});
 
-  return {
-    token: bearerToken,
-    clientId: "",
-    scopes: [],
-  };
-};
-
-const authHandler = withMcpAuth(mcpHandler, verifyToken);
-
-// Tools endpoint handler
-async function handleToolsEndpoint(request: NextRequest) {
-  try {
-    const tools = Object.entries(allToolDefinitions).map(
-      ([name, definition]) => ({
-        name,
-        description: definition.description,
-        // @ts-ignore
-        inputSchema: definition.schema
-          ? {
-              type: "object",
-              properties: definition.schema,
-              additionalProperties: false,
-              // @ts-ignore
-              required: Object.entries(definition.schema)
-                .filter(([_, value]) => !value.optional)
-                .map(([key, _]) => key),
-            }
-          : {
-              type: "object",
-              properties: {},
-              additionalProperties: false,
-            },
-      }),
-    );
-
-    return NextResponse.json(
-      {
-        tools,
-        metadata: {
-          totalTools: tools.length,
-          serverType: "GraphQL MCP Server",
-          version: "0.0.0-alpha.1",
-          usage: {
-            note: "Set GraphQL endpoint URL in 'X-GraphQL-URL' header when making requests",
-            headers: {
-              "X-GraphQL-URL": "Your GraphQL endpoint URL (required)",
-              Authorization:
-                "Bearer your_auth_token (optional for GraphQL endpoint auth)",
-            },
-          },
-        },
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, OPTIONS",
-          "Access-Control-Allow-Headers":
-            "Content-Type, Authorization, X-GraphQL-URL",
-        },
-      },
-    );
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error: `Failed to retrieve tools: ${error instanceof Error ? error.message : "Unknown error"}`,
-      },
-      { status: 500 },
-    );
-  }
-}
-
-// Route handlers
-export async function GET(request: NextRequest) {
-  const { pathname } = new URL(request.url);
-  if (pathname.endsWith("/tools")) {
-    return handleToolsEndpoint(request);
-  }
-  return authHandler(request);
-}
-
-export async function POST(request: NextRequest) {
-  const { pathname } = new URL(request.url);
-  if (pathname.endsWith("/tools")) {
-    return NextResponse.json(
-      { error: "Tools endpoint only supports GET requests" },
-      { status: 405 },
-    );
-  }
-  return authHandler(request);
-}
-
-export async function DELETE(request: NextRequest) {
-  return authHandler(request);
-}
-
-export async function OPTIONS(request: NextRequest) {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers":
-        "Content-Type, Authorization, X-GraphQL-URL",
-    },
-  });
-}
+export { authHandler as GET, authHandler as POST };

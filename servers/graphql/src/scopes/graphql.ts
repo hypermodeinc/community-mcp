@@ -4,16 +4,10 @@ import { McpResponse } from "@hypermode/mcp-shared";
 import { GraphQLClient } from "../lib/client";
 
 // ===============================
-// GRAPHQL SCHEMAS (Updated to remove endpoint parameter)
+// CLEAN GRAPHQL SCHEMAS (No endpoint/headers exposed)
 // ===============================
 
 export const introspectSchema = {
-  headers: z
-    .record(z.string())
-    .optional()
-    .describe(
-      "HTTP headers to include with requests (will override auth token if Authorization header is provided)",
-    ),
   include_descriptions: z
     .boolean()
     .optional()
@@ -32,12 +26,6 @@ export const querySchema = {
     .record(z.unknown())
     .optional()
     .describe("Query variables as JSON object"),
-  headers: z
-    .record(z.string())
-    .optional()
-    .describe(
-      "HTTP headers to include with requests (will override auth token if Authorization header is provided)",
-    ),
 };
 
 export const mutationSchema = {
@@ -46,49 +34,53 @@ export const mutationSchema = {
     .record(z.unknown())
     .optional()
     .describe("Mutation variables as JSON object"),
-  headers: z
-    .record(z.string())
-    .optional()
-    .describe(
-      "HTTP headers to include with requests (will override auth token if Authorization header is provided)",
-    ),
 };
 
 // ===============================
-// GRAPHQL ACTIONS (Updated to use headers for endpoint)
+// GRAPHQL ACTIONS (Using X-GraphQL-API header)
 // ===============================
 
 export async function introspectGraphQL(
   args: {
-    headers?: Record<string, string>;
     include_descriptions?: boolean;
     sort_schema?: boolean;
   },
-  context?: { authToken?: string; graphqlUrl?: string },
+  extra?: any,
 ): Promise<McpResponse> {
   try {
-    if (!context?.graphqlUrl) {
+    // Extract GraphQL URL from request headers
+    const graphqlUrl = String(
+      extra?.requestInfo?.headers?.["x-graphql-api"] ??
+        extra?.requestInfo?.headers?.["X-GraphQL-API"] ??
+        "",
+    );
+
+    if (!graphqlUrl) {
       return {
         content: [
           {
             type: "text",
-            text: "Error: GraphQL endpoint URL must be provided in 'X-GraphQL-URL' header",
+            text: "Error: GraphQL endpoint URL must be provided in 'X-GraphQL-API' header",
           },
         ],
       };
     }
 
+    // Extract bearer token from Authorization header
+    const authToken = String(
+      extra?.requestInfo?.headers?.authorization ?? "",
+    ).replace("Bearer ", "");
+
     const client = new GraphQLClient(
       {
-        endpoint: context.graphqlUrl,
+        endpoint: graphqlUrl,
       },
-      context?.authToken,
+      authToken || undefined,
     );
 
     return await client.introspect(
       args.include_descriptions ?? true,
       args.sort_schema ?? true,
-      args.headers,
     );
   } catch (error) {
     return {
@@ -106,30 +98,41 @@ export async function executeGraphQLQuery(
   args: {
     query: string;
     variables?: Record<string, unknown>;
-    headers?: Record<string, string>;
   },
-  context?: { authToken?: string; graphqlUrl?: string },
+  extra?: any,
 ): Promise<McpResponse> {
   try {
-    if (!context?.graphqlUrl) {
+    // Extract GraphQL URL from request headers
+    const graphqlUrl = String(
+      extra?.requestInfo?.headers?.["x-graphql-api"] ??
+        extra?.requestInfo?.headers?.["X-GraphQL-API"] ??
+        "",
+    );
+
+    if (!graphqlUrl) {
       return {
         content: [
           {
             type: "text",
-            text: "Error: GraphQL endpoint URL must be provided in 'X-GraphQL-URL' header",
+            text: "Error: GraphQL endpoint URL must be provided in 'X-GraphQL-API' header",
           },
         ],
       };
     }
 
+    // Extract bearer token from Authorization header
+    const authToken = String(
+      extra?.requestInfo?.headers?.authorization ?? "",
+    ).replace("Bearer ", "");
+
     const client = new GraphQLClient(
       {
-        endpoint: context.graphqlUrl,
+        endpoint: graphqlUrl,
       },
-      context?.authToken,
+      authToken || undefined,
     );
 
-    return await client.query(args.query, args.variables, args.headers);
+    return await client.query(args.query, args.variables);
   } catch (error) {
     return {
       content: [
@@ -146,30 +149,41 @@ export async function executeGraphQLMutation(
   args: {
     mutation: string;
     variables?: Record<string, unknown>;
-    headers?: Record<string, string>;
   },
-  context?: { authToken?: string; graphqlUrl?: string },
+  extra?: any,
 ): Promise<McpResponse> {
   try {
-    if (!context?.graphqlUrl) {
+    // Extract GraphQL URL from request headers
+    const graphqlUrl = String(
+      extra?.requestInfo?.headers?.["x-graphql-api"] ??
+        extra?.requestInfo?.headers?.["X-GraphQL-API"] ??
+        "",
+    );
+
+    if (!graphqlUrl) {
       return {
         content: [
           {
             type: "text",
-            text: "Error: GraphQL endpoint URL must be provided in 'X-GraphQL-URL' header",
+            text: "Error: GraphQL endpoint URL must be provided in 'X-GraphQL-API' header",
           },
         ],
       };
     }
 
+    // Extract bearer token from Authorization header
+    const authToken = String(
+      extra?.requestInfo?.headers?.authorization ?? "",
+    ).replace("Bearer ", "");
+
     const client = new GraphQLClient(
       {
-        endpoint: context.graphqlUrl,
+        endpoint: graphqlUrl,
       },
-      context?.authToken,
+      authToken || undefined,
     );
 
-    return await client.mutation(args.mutation, args.variables, args.headers);
+    return await client.mutation(args.mutation, args.variables);
   } catch (error) {
     return {
       content: [
@@ -183,23 +197,23 @@ export async function executeGraphQLMutation(
 }
 
 // ===============================
-// GRAPHQL TOOL DEFINITIONS (Updated descriptions)
+// CLEAN GRAPHQL TOOL DEFINITIONS
 // ===============================
 
 export const graphqlToolDefinitions = {
   graphql_introspect: {
     description:
-      "Introspect a GraphQL endpoint and return the complete schema in SDL (Schema Definition Language) format. This provides a human-readable schema that can be used with GraphQL tools, IDEs, and for understanding the complete API structure. Uses auth token automatically if available. GraphQL endpoint URL must be provided in 'X-GraphQL-URL' header.",
+      "Introspect a GraphQL endpoint and return the complete schema in SDL (Schema Definition Language) format. This provides a human-readable schema that can be used with GraphQL tools, IDEs, and for understanding the complete API structure.",
     schema: introspectSchema,
   },
   graphql_query: {
     description:
-      "Execute a GraphQL query against a specified endpoint with optional variables. Uses auth token automatically if available. GraphQL endpoint URL must be provided in 'X-GraphQL-URL' header.",
+      "Execute a GraphQL query against a specified endpoint with optional variables",
     schema: querySchema,
   },
   graphql_mutation: {
     description:
-      "Execute a GraphQL mutation against a specified endpoint with optional variables. Uses auth token automatically if available. GraphQL endpoint URL must be provided in 'X-GraphQL-URL' header.",
+      "Execute a GraphQL mutation against a specified endpoint with optional variables",
     schema: mutationSchema,
   },
 };
