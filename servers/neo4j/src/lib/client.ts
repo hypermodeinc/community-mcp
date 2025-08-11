@@ -15,7 +15,6 @@ export class Neo4jClient {
     }
 
     try {
-      // Username and password are always required from headers
       if (!this.config.username || !this.config.password) {
         throw new Error(
           "Neo4j username and password must be provided in headers",
