@@ -8,7 +8,8 @@
     "build": "pnpm -r build",
     "start:attio": "pnpm --filter @hypermode/attio-mcp-server start",
     "start:motherduck": "pnpm --filter @hypermode/motherduck-mcp-server start",
-    "start:graphql": "pnpm --filter @hypermode/graphql-mcp-server start"
+    "start:graphql": "pnpm --filter @hypermode/graphql-mcp-server start",
+    "start:neo4j": "pnpm --filter @hypermode/neo4j-mcp-server start"
   },
   "private": true,
   "homepage": "https://github.com/hypermodeinc/community-mcp#readme",

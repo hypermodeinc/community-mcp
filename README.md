@@ -55,6 +55,23 @@ A powerful MCP server for MotherDuck cloud analytics database integration, provi
 
 [View MotherDuck Server Documentation](./servers/motherduck/README.md)
 
+### Neo4j Graph Database Server
+
+A Model Context Protocol server for Neo4j graph database integration, enabling complex graph queries and relationship analysis through natural language.
+
+**Location**: `servers/neo4j/`
+
+**Features**:
+
+- Schema introspection with APOC support
+- Cypher query execution (read/write operations)
+- Query plan explanation and optimization
+- Parameterized queries for security
+- Connection pooling for performance
+- Support for all Neo4j deployment types (Cloud, Aura, self-hosted)
+
+[View Neo4j Server Documentation](./servers/neo4j/README.md)
+
 ## Server Capabilities Overview
 
 | Server         | Primary Use Case | Key Strengths                                        | Data Sources           |
@@ -62,6 +79,7 @@ A powerful MCP server for MotherDuck cloud analytics database integration, provi
 | **Attio**      | CRM Management   | Record CRUD, Relationship mapping, Sales pipeline    | Attio CRM platform     |
 | **GraphQL**    | API Integration  | Universal client, Schema discovery, Flexible queries | Any GraphQL API        |
 | **MotherDuck** | Data Analytics   | SQL analytics, Data lake access, Cloud scale         | Cloud databases, Files |
+| **Neo4j**      | Graph Database   | Cypher queries, Relationship analysis, APOC support  | Neo4j graph databases  |
 
 ## Architecture
 
@@ -87,7 +105,8 @@ community-mcp/
 ├── servers/
 │   ├── attio/                 # Attio CRM integration server
 │   ├── graphql/               # GraphQL API integration server
-│   └── motherduck/            # MotherDuck analytics server
+│   ├── motherduck/            # MotherDuck analytics server
+│   └── neo4j/                 # Neo4j graph database server
 ├── package.json               # Root workspace configuration
 └── pnpm-workspace.yaml       # pnpm workspace settings
 ```
@@ -99,6 +118,7 @@ community-mcp/
 - `pnpm start:attio` - Start the Attio server locally
 - `pnpm start:graphql` - Start the GraphQL server locally
 - `pnpm start:motherduck` - Start the MotherDuck server locally
+- `pnpm start:neo4j` - Start the Neo4j server locally
 - `pnpm clean` - Clean all build artifacts and dependencies
 
 ### Local Development
@@ -117,6 +137,7 @@ Each server includes detailed setup instructions in its individual README:
 - **Attio**: Requires Attio API key from workspace settings
 - **GraphQL**: Supports various authentication methods per API
 - **MotherDuck**: Requires MotherDuck access token
+- **Neo4j**: Requires Neo4j connection details via headers
 
 Refer to individual server documentation for complete setup guides, authentication details, and usage examples.
 
