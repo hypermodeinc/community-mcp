@@ -103,95 +103,46 @@ function isReadQuery(query: string): boolean {
   return readPatterns.test(query) && !writePatterns.test(query);
 }
 
-// Helper function to get schema without APOC
-async function getSchemaWithoutAPOC(client: Neo4jClient): Promise<any> {
+async function getSimpleSchema(client: Neo4jClient): Promise<any> {
   const schemaInfo: any = {
     nodeLabels: [],
     relationshipTypes: [],
-    propertyKeys: [],
-    constraints: [],
-    indexes: [],
-    nodeProperties: {},
-    relationshipProperties: {},
   };
 
   try {
-    // Get all node labels
-    const labelsResult = await client.executeQuery("CALL db.labels()", {}, "READ");
-    if (labelsResult.content?.[0]?.text) {
-      const labelsData = JSON.parse(labelsResult.content[0].text);
-      schemaInfo.nodeLabels = labelsData.records?.map((r: any) => r._fields[0]) || [];
-    }
+    // Get node labels from actual data
+    const labelsResult = await client.executeQuery(
+      "MATCH (n) RETURN DISTINCT labels(n) AS nodeLabels LIMIT 1000",
+      {},
+      "READ"
+    );
 
-    // Get all relationship types
-    const relTypesResult = await client.executeQuery("CALL db.relationshipTypes()", {}, "READ");
-    if (relTypesResult.content?.[0]?.text) {
-      const relTypesData = JSON.parse(relTypesResult.content[0].text);
-      schemaInfo.relationshipTypes = relTypesData.records?.map((r: any) => r._fields[0]) || [];
-    }
+    if (labelsResult?.content?.[0]?.text) {
+      const parsedData = JSON.parse(labelsResult.content[0].text);
+      const uniqueLabels = new Set<string>();
 
-    // Get all property keys
-    const propKeysResult = await client.executeQuery("CALL db.propertyKeys()", {}, "READ");
-    if (propKeysResult.content?.[0]?.text) {
-      const propKeysData = JSON.parse(propKeysResult.content[0].text);
-      schemaInfo.propertyKeys = propKeysData.records?.map((r: any) => r._fields[0]) || [];
-    }
-
-    // Get constraints
-    const constraintsResult = await client.executeQuery("SHOW CONSTRAINTS", {}, "READ");
-    if (constraintsResult.content?.[0]?.text) {
-      const constraintsData = JSON.parse(constraintsResult.content[0].text);
-      schemaInfo.constraints = constraintsData.records || [];
-    }
-
-    // Get indexes
-    const indexesResult = await client.executeQuery("SHOW INDEXES", {}, "READ");
-    if (indexesResult.content?.[0]?.text) {
-      const indexesData = JSON.parse(indexesResult.content[0].text);
-      schemaInfo.indexes = indexesData.records || [];
-    }
-
-    for (const label of schemaInfo.nodeLabels) {
-      try {
-        const sampleQuery = `MATCH (n:\`${label}\`) RETURN keys(n) AS properties LIMIT 100`;
-        const sampleResult = await client.executeQuery(sampleQuery, {}, "READ");
-
-        if (sampleResult.content?.[0]?.text) {
-          const sampleData = JSON.parse(sampleResult.content[0].text);
-          const allProperties = new Set<string>();
-
-          sampleData.records?.forEach((record: any) => {
-            const properties = record._fields[0] || [];
-            properties.forEach((prop: string) => allProperties.add(prop));
-          });
-
-          schemaInfo.nodeProperties[label] = Array.from(allProperties);
+      parsedData.records?.forEach((record: any) => {
+        const labelArray = record._fields[0];
+        if (Array.isArray(labelArray)) {
+          labelArray.forEach((label: string) => uniqueLabels.add(label));
         }
-      } catch (error) {
-        // Skip if sampling fails for this label
-        schemaInfo.nodeProperties[label] = [];
-      }
+      });
+
+      schemaInfo.nodeLabels = Array.from(uniqueLabels).sort();
     }
 
-    for (const relType of schemaInfo.relationshipTypes) {
-      try {
-        const sampleQuery = `MATCH ()-[r:\`${relType}\`]-() RETURN keys(r) AS properties LIMIT 100`;
-        const sampleResult = await client.executeQuery(sampleQuery, {}, "READ");
+    // Get relationship types from actual data
+    const relTypesResult = await client.executeQuery(
+      "MATCH ()-[r]-() RETURN DISTINCT type(r) AS relType LIMIT 1000",
+      {},
+      "READ"
+    );
 
-        if (sampleResult.content?.[0]?.text) {
-          const sampleData = JSON.parse(sampleResult.content[0].text);
-          const allProperties = new Set<string>();
-
-          sampleData.records?.forEach((record: any) => {
-            const properties = record._fields[0] || [];
-            properties.forEach((prop: string) => allProperties.add(prop));
-          });
-
-          schemaInfo.relationshipProperties[relType] = Array.from(allProperties);
-        }
-      } catch (error) {
-        schemaInfo.relationshipProperties[relType] = [];
-      }
+    if (relTypesResult?.content?.[0]?.text) {
+      const parsedData = JSON.parse(relTypesResult.content[0].text);
+      schemaInfo.relationshipTypes = parsedData.records?.map((record: any) => record._fields[0])
+        .filter((type: any) => type != null)
+        .sort() || [];
     }
 
     return {
@@ -218,11 +169,8 @@ export async function getNeo4jSchema(args: {}, extra?: any) {
     const client = new Neo4jClient(config);
 
     try {
-      try {
-        return await client.getSchema();
-      } catch (apocError) {
-        return await getSchemaWithoutAPOC(client);
-      }
+      // Just use simple schema discovery with standard Cypher
+      return await getSimpleSchema(client);
     } finally {
       await client.close();
     }
@@ -353,7 +301,7 @@ export async function explainNeo4jQuery(
 export const neo4jToolDefinitions = {
   neo4j_schema: {
     description:
-      "Get the Neo4j database schema including node labels, relationship types, properties, constraints, and indexes. Automatically falls back to standard Cypher procedures if APOC is not available.",
+      "Get the basic Neo4j database schema including node labels and relationship types using standard Cypher queries.",
     schema: schemaRequestSchema,
   },
   neo4j_read: {
