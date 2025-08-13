@@ -104,58 +104,67 @@ function isReadQuery(query: string): boolean {
 }
 
 async function getSimpleSchema(client: Neo4jClient): Promise<any> {
-  const schemaInfo: any = {
-    nodeLabels: [],
-    relationshipTypes: [],
-  };
-
   try {
-    // Get node labels from actual data
-    const labelsResult = await client.executeQuery(
-      "MATCH (n) RETURN DISTINCT labels(n) AS nodeLabels LIMIT 1000",
-      {},
-      "READ"
-    );
+    const [labelsResult, relTypesResult] = await Promise.all([
+      client.executeQuery("CALL db.labels()", {}, "READ"),
+      client.executeQuery("CALL db.relationshipTypes()", {}, "READ"),
+    ]);
 
-    if (labelsResult?.content?.[0]?.text) {
-      const parsedData = JSON.parse(labelsResult.content[0].text);
-      const uniqueLabels = new Set<string>();
+    const parseResult = (result: any, queryType: string) => {
+      if (!result?.content?.[0]?.text) {
+        return [];
+      }
 
-      parsedData.records?.forEach((record: any) => {
-        const labelArray = record._fields[0];
-        if (Array.isArray(labelArray)) {
-          labelArray.forEach((label: string) => uniqueLabels.add(label));
+      const rawText = result.content[0].text;
+
+      try {
+        // Extract JSON part after "Query returned X results:"
+        const jsonStart = rawText.indexOf("[");
+        if (jsonStart === -1) return [];
+
+        const jsonText = rawText.substring(jsonStart);
+        const parsed = JSON.parse(jsonText);
+
+        // Extract the actual values from the objects
+        if (queryType === "labels") {
+          return parsed
+            .map((item: any) => item.label)
+            .filter(Boolean)
+            .sort();
+        } else {
+          return parsed
+            .map((item: any) => item.relationshipType)
+            .filter(Boolean)
+            .sort();
         }
-      });
+      } catch (parseError) {
+        console.error(`Failed to parse ${queryType} response:`, parseError);
+        return [];
+      }
+    };
 
-      schemaInfo.nodeLabels = Array.from(uniqueLabels).sort();
-    }
-
-    // Get relationship types from actual data
-    const relTypesResult = await client.executeQuery(
-      "MATCH ()-[r]-() RETURN DISTINCT type(r) AS relType LIMIT 1000",
-      {},
-      "READ"
-    );
-
-    if (relTypesResult?.content?.[0]?.text) {
-      const parsedData = JSON.parse(relTypesResult.content[0].text);
-      schemaInfo.relationshipTypes = parsedData.records?.map((record: any) => record._fields[0])
-        .filter((type: any) => type != null)
-        .sort() || [];
-    }
+    const nodeLabels = parseResult(labelsResult, "labels");
+    const relationshipTypes = parseResult(relTypesResult, "relationshipTypes");
 
     return {
       content: [
         {
           type: "text",
-          text: JSON.stringify(schemaInfo, null, 2),
+          text: JSON.stringify(
+            {
+              nodeLabels,
+              relationshipTypes,
+            },
+            null,
+            2,
+          ),
         },
       ],
     };
-
   } catch (error) {
-    throw new Error(`Failed to retrieve schema: ${error instanceof Error ? error.message : "Unknown error"}`);
+    throw new Error(
+      `Failed to retrieve schema: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 }
 
