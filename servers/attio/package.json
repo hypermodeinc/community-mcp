@@ -14,11 +14,11 @@
     "generate:schema": "npx tsx ./scripts/extract-tools-schema.ts > tools-schema.json"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.17.0",
+    "@modelcontextprotocol/sdk": "1.17.2",
     "@types/json-schema": "7.0.15",
-    "@vercel/mcp-adapter": "0.11.1",
+    "@vercel/mcp-adapter": "0.11.2",
     "json-schema": "0.4.0",
-    "next": "15.3.5",
+    "next": "15.4.6",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "zod": "3.25.76",

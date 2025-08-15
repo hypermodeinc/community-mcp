@@ -14,10 +14,10 @@
   },
   "dependencies": {
     "@hypermode/mcp-shared": "workspace:*",
-    "@modelcontextprotocol/sdk": "1.17.0",
+    "@modelcontextprotocol/sdk": "1.17.2",
     "mcp-handler": "1.0.1",
     "neo4j-driver": "5.28.1",
-    "next": "15.3.5",
+    "next": "15.4.6",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "zod": "3.25.76"
