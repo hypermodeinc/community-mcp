@@ -1,5 +1,9 @@
 import { z } from "zod";
 import { Neo4jClient } from "../lib/client";
+import {
+  generateVisualization,
+  generateVisualizationSchema,
+} from "./generate_visualization";
 
 // ===============================
 // NEO4J SCHEMAS
@@ -328,6 +332,11 @@ export const neo4jToolDefinitions = {
       "Explain the execution plan for a Cypher query without running it. Useful for query optimization.",
     schema: explainQuerySchema,
   },
+  generate_visualization: {
+    description:
+      "Generates a SVG diagram from the graph data - returns Base64-encoded SVG string mime type svg+xml",
+    schema: generateVisualizationSchema,
+  },
 };
 
 // ===============================
@@ -339,4 +348,5 @@ export const neo4jActions = {
   neo4j_read: executeReadQuery,
   neo4j_write: executeWriteQuery,
   neo4j_explain: explainNeo4jQuery,
+  generate_visualization: generateVisualization,
 };
