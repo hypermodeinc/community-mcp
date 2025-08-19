@@ -63,7 +63,7 @@ function formatResultsAsTable(columns: any[], rows: any[]): string {
 const handler = createMcpHandler(
   (server) => {
     server.tool(
-      "query",
+      "motherduck_query",
       "Execute a SQL query on the MotherDuck database using DuckDB SQL dialect. Supports analytics queries, data exploration, aggregations, joins, and more.",
       {
         query: z
@@ -94,18 +94,15 @@ const handler = createMcpHandler(
           let connection;
 
           if (motherduckToken) {
-            console.log("Connecting to MotherDuck with user token...");
             instance = await duckdb.DuckDBInstance.create(
               `md:?motherduck_token=${motherduckToken}`,
             );
             connection = await instance.connect();
           } else {
-            console.log("Creating local DuckDB instance...");
             instance = await duckdb.DuckDBInstance.create();
             connection = await instance.connect();
           }
 
-          // Execute the query
           const result = await connection.run(query);
 
           const chunkCount = result.chunkCount;
@@ -116,7 +113,6 @@ const handler = createMcpHandler(
           for (let i = 0; i < chunkCount; i++) {
             const chunk = result.getChunk(i);
 
-            // Get column info from first chunk
             if (i === 0) {
               columnInfo = [];
               for (let colIdx = 0; colIdx < chunk.columnCount; colIdx++) {
@@ -168,7 +164,6 @@ const handler = createMcpHandler(
   },
 );
 
-// Wrap handler with authentication
 const authHandler = withMcpAuth(handler, verifyToken, {
   required: false, // Allow both authenticated and unauthenticated access
   requiredScopes: [], // No specific scopes required
