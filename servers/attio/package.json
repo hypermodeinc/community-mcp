@@ -10,8 +10,7 @@
     "start": "next start",
     "deploy": "vercel",
     "deploy:prod": "vercel --prod",
-    "lint": "next lint",
-    "generate:schema": "npx tsx ./scripts/extract-tools-schema.ts > tools-schema.json"
+    "lint": "next lint"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.17.0",
