@@ -13,11 +13,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.17.0",
+    "@modelcontextprotocol/sdk": "1.17.4",
     "@types/json-schema": "7.0.15",
-    "@vercel/mcp-adapter": "0.11.1",
+    "@vercel/mcp-adapter": "0.11.2",
     "json-schema": "0.4.0",
-    "next": "15.3.5",
+    "next": "15.5.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "zod": "3.25.76",
@@ -50,6 +50,6 @@
     "directory": "servers/attio-nextjs"
   },
   "engines": {
-    "node": "24.5.0"
+    "node": "24.6.0"
   }
 }

@@ -2,7 +2,7 @@
   "name": "@hypermode/community-mcp",
   "version": "0.0.0-alpha.0",
   "description": "Curated list of new, forked and redesigned MCP servers to be used in conversational agents",
-  "packageManager": "pnpm@10.6.0",
+  "packageManager": "pnpm@10.15.0",
   "scripts": {
     "clean": "find . -type d \\( -name \"node_modules\" -o -name \"build\" -o -name \"dist\" \\) -exec rm -rf {} + && rm ./pnpm-lock.yaml",
     "build": "pnpm -r build",
@@ -65,6 +65,6 @@
     "@types/express": "5.0.3",
     "dotenv": "17.2.1",
     "express": "5.1.0",
-    "tsx": "4.20.3"
+    "tsx": "4.20.4"
   }
 }
